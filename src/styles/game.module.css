@@ -1,8 +1,20 @@
+.root {
+  width: min-content;
+}
+
 .upper-display {
   width: 100%;
   height: 640px;
   margin-bottom: 10px;
   display: flex;
+}
+
+.upper-display > * {
+  margin-right: 10px;
+}
+
+.upper-display > *:last-child {
+  margin-right: 0;
 }
 
 .players-container {
@@ -30,13 +42,21 @@
 
 .player-name {
   display: flex;
-  flex-basis: 20%;
+  /* flex-basis: 20%; */
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
   color: rgba(0, 0, 0, 0.5);
   font-weight: bold;
   width: 100%;
+}
+
+.player-score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 /* player status's minos */
@@ -45,6 +65,7 @@
   overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   background: rgba(0, 0, 0, 0.1);
   padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 15px -9px inset;
@@ -59,6 +80,7 @@
 
 /* My minos */
 .lower-display {
+  width: 100%;
   height: 25vh;
   background: #e3e3e3;
   border-radius: 10px 10px 0 0;

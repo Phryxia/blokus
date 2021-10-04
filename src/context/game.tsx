@@ -10,7 +10,7 @@ import {
   Rotation,
 } from '../model'
 import { shuffle } from '../utils'
-import { flipX, flipY, MINOS, rotate, transform } from '../model/minos'
+import { MINOS, transform } from '../model/minos'
 import { useRoom } from '../context/room'
 
 interface GameContextInterface {
