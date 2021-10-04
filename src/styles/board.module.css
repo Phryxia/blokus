@@ -1,0 +1,63 @@
+.container {
+  width: 100%;
+  height: 100%;
+  background: #e3e3e3;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* board size is 600px */
+.board-wrapper {
+  width: 100%;
+  height: 100%;
+  background: #cecece;
+}
+
+.row {
+  height: 5%;
+}
+
+.cell {
+  display: inline-block;
+  position: relative;
+  width: 5%;
+  height: 100%;
+  padding: 2px;
+}
+
+.cell .inner {
+  width: 100%;
+  height: 100%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cell .inner div {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.cell .inner div.highlighted {
+  display: block;
+}
+
+.highlighted.blue {
+  background: rgb(160, 183, 220);
+}
+
+.highlighted.yellow {
+  background: rgb(244, 230, 157);
+}
+
+.highlighted.red {
+  background: rgb(235, 147, 139);
+}
+
+.highlighted.green {
+  background: rgb(177, 214, 160);
+}

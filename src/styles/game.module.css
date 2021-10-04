@@ -1,0 +1,94 @@
+.upper-display {
+  width: 100%;
+  height: 640px;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.players-container {
+  width: 320px;
+  height: 100%;
+}
+
+.board {
+  width: 640px;
+}
+
+.player {
+  height: calc(50% - 5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.player:last-child {
+  margin-bottom: 0px;
+}
+
+.player-name {
+  display: flex;
+  flex-basis: 20%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+  width: 100%;
+}
+
+/* player status's minos */
+.mino-container {
+  flex-basis: 80%;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 15px -9px inset;
+}
+
+.mino-container .mino {
+  width: max-content;
+  height: max-content;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* My minos */
+.lower-display {
+  height: 25vh;
+  background: #e3e3e3;
+  border-radius: 10px 10px 0 0;
+  padding: 10px;
+}
+
+.my-minos {
+  height: 100%;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mino-button {
+  width: max-content;
+  height: max-content;
+  background: none;
+  border: none;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.mino-button:disable {
+  background: gray;
+}
+
+.selected-mino {
+  position: fixed;
+  pointer-events: none;
+}

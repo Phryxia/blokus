@@ -1,0 +1,32 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.red {
+  background: rgb(200, 46, 34);
+}
+
+.green {
+  background: rgb(94, 152, 67);
+}
+
+.blue {
+  background: rgb(56, 91, 149);
+}
+
+.yellow {
+  background: rgb(230, 196, 36);
+}
