@@ -25,7 +25,9 @@ export default function PlayerStatus({ position }: PlayerStatusProps) {
   const score = remainMinos?.reduce((sum, mino) => sum + mino.shapes.length, 0)
 
   return (
-    <div className={classnames(cx('player'), color, { white: !color })}>
+    <div
+      className={classnames(cx('player'), color, { white: !color }, 'window')}
+    >
       <span className={cx('player-name')}>
         {player ? `${player?.name}${player?.isAi ? ' (AI)' : ''}` : 'OFFLINE'}
       </span>

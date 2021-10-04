@@ -1,4 +1,5 @@
 .root {
+  position: relative;
   width: min-content;
 }
 
@@ -23,6 +24,7 @@
 }
 
 .board {
+  position: relative;
   width: 640px;
 }
 
@@ -31,9 +33,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px;
   margin-bottom: 10px;
-  border-radius: 10px;
 }
 
 .player:last-child {
@@ -112,8 +112,6 @@
   width: 100%;
   height: 25vh;
   background: #e3e3e3;
-  border-radius: 10px 10px 0 0;
-  padding: 10px;
 }
 
 .my-minos {

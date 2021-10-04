@@ -22,7 +22,7 @@ export default function MyMinos() {
   }
 
   return (
-    <div className={cx('lower-display')}>
+    <div className={classnames(cx('lower-display'), 'window')}>
       <div className={cx('my-minos')}>
         {myPlayerStatus &&
           myPlayerStatus.remainMinos.map((mino) => (

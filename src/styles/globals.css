@@ -33,3 +33,14 @@ a {
 .yellow {
   background: rgb(230, 196, 36);
 }
+
+.dimmed {
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.window {
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+}
