@@ -68,7 +68,7 @@ export function GameProvider({ children }) {
   const [gameState, setGameState] = useState<GameState | undefined>()
   const fullFeasibles = useRef<MinoPlacement[][]>([])
   const { players, me } = useRoom()
-  const { showNotice } = useNotice()
+  const { showNotice, close } = useNotice()
 
   const myPlayerId =
     gameState?.players.findIndex(
@@ -285,6 +285,7 @@ export function GameProvider({ children }) {
       ...gameState,
       endTime: new Date(),
     })
+    close()
   }
 
   function resetGame(): void {
