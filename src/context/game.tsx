@@ -15,8 +15,9 @@ import { useRoom } from '../context/room'
 
 interface GameContextInterface {
   gameState?: GameState
+  gamePhase: GamePhase
   cellStates: CellState[][]
-  myPlayerId: number // 없으면 -1
+  myPlayerId: number // If I'm not in this game, -1.
   createGame(): void
   isPlaceable(playerId: number, placement: MinoPlacement): boolean
   getFeasiblePlacements(
@@ -25,6 +26,12 @@ interface GameContextInterface {
     transform?: MinoTransform
   ): MinoPlacement[]
   place(playerId: number, placement: MinoPlacement): void
+}
+
+export const enum GamePhase {
+  WAITING = 0,
+  PLAYING = 1,
+  FINISHED = 2,
 }
 
 export interface CellState {
@@ -45,6 +52,7 @@ const dxd = [-1, 1, 1, -1]
 const dyd = [-1, -1, 1, 1]
 
 export function GameProvider({ children }) {
+  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WAITING)
   const [gameState, setGameState] = useState<GameState | undefined>()
   const { players, me } = useRoom()
 
@@ -53,6 +61,7 @@ export function GameProvider({ children }) {
       (playerStatus) => playerStatus.player === me
     ) ?? -1
 
+  // Create and start new game using current connected players
   function createGame(): void {
     const orders = shuffle([0, 1, 2, 3].slice(0, players.length))
     setGameState({
@@ -70,6 +79,7 @@ export function GameProvider({ children }) {
           placements: [],
         })),
     })
+    setGamePhase(GamePhase.PLAYING)
   }
 
   const cellStates = useMemo(() => {
@@ -233,6 +243,7 @@ export function GameProvider({ children }) {
 
     setGameState({
       ...gameState,
+      iteration: (gameState.iteration + 1) % gameState.players.length,
       players: gameState.players.map((playerStatus) => {
         if (playerStatus.playerId !== playerId) return playerStatus
 
@@ -251,6 +262,7 @@ export function GameProvider({ children }) {
     <GameContext.Provider
       value={{
         gameState,
+        gamePhase,
         cellStates,
         myPlayerId,
         createGame,

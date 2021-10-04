@@ -4,7 +4,10 @@ import { Player } from '../model'
 interface RoomContextInterface {
   players: Player[]
   me?: Player
-  signIn(name: string): Promise<void>
+  isSingleMode: boolean
+  addPlayer(name: string, position: number, isAi?: boolean): Player
+  removePlayer(player: Player): void
+  signIn(name: string, position: number): Promise<void>
 }
 
 const RoomContext = createContext<RoomContextInterface>(undefined)
@@ -13,32 +16,22 @@ export function useRoom() {
   return useContext(RoomContext)
 }
 
-export function RoomProvider({ children }) {
+export function RoomProvider({ children, isSingleMode }) {
   const [players, setPlayers] = useState<Player[]>([])
   const [me, setMe] = useState<Player | undefined>()
 
-  useEffect(() => {
-    // Dummy
-    setPlayers([
-      {
-        name: '구아악',
-      },
-      {
-        name: '좌측하단',
-      },
-      {
-        name: '바보',
-      },
-    ])
-  }, [])
+  function addPlayer(name: string, position: number, isAi?: boolean): Player {
+    const newPlayer = { name, position, isAi }
+    setPlayers([...players, newPlayer])
+    return newPlayer
+  }
 
-  async function signIn(name: string): Promise<void> {
-    const newMe = {
-      name,
-    }
+  function removePlayer(player: Player): void {
+    setPlayers(players.filter((p) => p !== player))
+  }
 
-    setMe(newMe)
-    setPlayers([...players, newMe])
+  async function signIn(name: string, position: number): Promise<void> {
+    setMe(addPlayer(name, position, false))
   }
 
   return (
@@ -46,6 +39,9 @@ export function RoomProvider({ children }) {
       value={{
         players,
         me,
+        isSingleMode,
+        addPlayer,
+        removePlayer,
         signIn,
       }}
     >

@@ -5,7 +5,7 @@ import { RoomProvider } from '../../context/room'
 
 export default function Game() {
   return (
-    <RoomProvider>
+    <RoomProvider isSingleMode>
       <GameProvider>
         <SelectedMinoProvider>
           <GameRoom />

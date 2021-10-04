@@ -31,6 +31,8 @@ export interface MinoPlacement extends MinoTransform {
 
 export interface Player {
   name: string
+  isAi?: boolean
+  position: number // left up: 0, left down: 1, right up: 2, right down: 3
 }
 
 export interface GameState {
