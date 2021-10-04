@@ -18,6 +18,7 @@ interface GameContextInterface {
   gamePhase: GamePhase
   cellStates: CellState[][]
   myPlayerId: number // If I'm not in this game, -1.
+  currentPlayerId?: number
   createGame(): void
   isPlaceable(playerId: number, placement: MinoPlacement): boolean
   getFeasiblePlacements(
@@ -134,7 +135,9 @@ export function GameProvider({ children }) {
 
     // 시작인 경우, 모서리에만 놓을 수 있음
     if (gameState.players[playerId].placements.length === 0) {
-      const { x: startX, y: startY } = getStartCorner(playerId)
+      const { x: startX, y: startY } = getStartCorner(
+        gameState.players[playerId].player.position
+      )
 
       return mino.shapes.some(({ x, y }) => {
         return x + position.x === startX && y + position.y === startY
@@ -265,6 +268,7 @@ export function GameProvider({ children }) {
         gamePhase,
         cellStates,
         myPlayerId,
+        currentPlayerId: gameState?.iteration % gameState?.players.length,
         createGame,
         isPlaceable,
         getFeasiblePlacements,
@@ -280,8 +284,8 @@ function isInBoard({ x, y }: Coordinate): boolean {
   return 0 <= x && x < BOARD_SIZE && 0 <= y && y < BOARD_SIZE
 }
 
-function getStartCorner(playerId: number): Coordinate {
-  switch (playerId) {
+function getStartCorner(position: number): Coordinate {
+  switch (position) {
     case 0:
       return { x: 0, y: 0 }
     case 1:

@@ -11,7 +11,7 @@ export default function Board() {
   const {
     gameState,
     cellStates,
-    myPlayerId,
+    currentPlayerId,
     getFeasiblePlacements,
     place,
     isPlaceable,
@@ -26,14 +26,14 @@ export default function Board() {
       position: { x, y },
       ...currentTransform,
     }
-    if (isPlaceable(myPlayerId, placement)) {
-      place(myPlayerId, placement)
+    if (isPlaceable(currentPlayerId, placement)) {
+      place(currentPlayerId, placement)
       setSelectedMino(undefined)
     }
   }
 
   const feasiblePlacements = selectedMino
-    ? getFeasiblePlacements(myPlayerId, selectedMino, currentTransform)
+    ? getFeasiblePlacements(currentPlayerId, selectedMino, currentTransform)
     : []
   const highlightMap = new Map<string, boolean>()
   feasiblePlacements.forEach(
@@ -58,12 +58,10 @@ export default function Board() {
             {row.map(({ playerId }, x) => (
               <Cell
                 key={x}
-                color={
-                  playerId ? gameState?.players[playerId].color : undefined
-                }
+                color={gameState?.players[playerId]?.color}
                 highlightColor={
                   highlightMap.get(`${x}-${y}`)
-                    ? gameState?.players[myPlayerId]?.color
+                    ? gameState?.players[currentPlayerId]?.color
                     : undefined
                 }
                 onClick={() => handleCellClick(x, y)}

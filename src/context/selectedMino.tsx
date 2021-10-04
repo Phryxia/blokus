@@ -31,17 +31,17 @@ export function useSelectedMino() {
 }
 
 export function SelectedMinoProvider({ children }) {
-  const { gameState } = useGame()
-  const { me } = useRoom()
+  const { gameState, currentPlayerId } = useGame()
+  const { me, isSingleMode } = useRoom()
   const [selectedMino, setSelectedMino] = useState<Mino | undefined>()
   const [isFlippedX, setIsFlippedX] = useState<boolean>(false)
   const [isFlippedY, setIsFlippedY] = useState<boolean>(false)
   const [rotation, setRotation] = useState<Rotation>(0)
   const minoRef = useRef<HTMLDivElement>()
 
-  const myPlayerStatus = gameState?.players.find(
-    (player) => player.player === me
-  )
+  const myPlayerStatus = isSingleMode
+    ? gameState?.players[currentPlayerId]
+    : gameState?.players.find((player) => player.player === me)
 
   useEffect(() => {
     function handleMouseMove(event) {

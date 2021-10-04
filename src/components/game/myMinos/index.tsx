@@ -9,13 +9,13 @@ import { useSelectedMino } from '@context/selectedMino'
 const cx = classnames.bind(styles)
 
 export default function MyMinos() {
-  const { gameState } = useGame()
-  const { me } = useRoom()
+  const { gameState, currentPlayerId } = useGame()
+  const { me, isSingleMode } = useRoom()
   const { setSelectedMino } = useSelectedMino()
 
-  const myPlayerStatus = gameState?.players.find(
-    (player) => player.player === me
-  )
+  const myPlayerStatus = isSingleMode
+    ? gameState?.players[currentPlayerId]
+    : gameState?.players.find((player) => player.player === me)
 
   function handleMinoClick(mino: Mino): void {
     setSelectedMino(mino)
