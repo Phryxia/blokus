@@ -10,7 +10,7 @@ import { useMemo } from 'react'
 const cx = classnames.bind(styles)
 
 export default function MyMinos() {
-  const { gameState, currentPlayerId, getFeasiblePlacements } = useGame()
+  const { gameState, currentPlayerId, fullFeasiblePlacements } = useGame()
   const { me, isSingleMode } = useRoom()
   const { setSelectedMino } = useSelectedMino()
 
@@ -28,9 +28,9 @@ export default function MyMinos() {
     if (!myPlayerStatus?.remainMinos) return result
 
     myPlayerStatus.remainMinos.forEach((mino) => {
-      if (getFeasiblePlacements(currentPlayerId, mino).length === 0) {
-        result[mino.name] = true
-      }
+      result[mino.name] = !fullFeasiblePlacements[currentPlayerId].some(
+        (placement) => placement.mino.name === mino.name
+      )
     })
 
     return result

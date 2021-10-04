@@ -1,4 +1,11 @@
-import { useState, createContext, useContext, useMemo, useEffect } from 'react'
+import {
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+  useEffect,
+  useRef,
+} from 'react'
 import {
   BOARD_SIZE,
   Color,
@@ -20,6 +27,7 @@ interface GameContextInterface {
   cellStates: CellState[][]
   myPlayerId: number // If I'm not in this game, -1.
   currentPlayerId?: number
+  fullFeasiblePlacements?: MinoPlacement[][] // [playerId][]
   createGame(): void
   finishGame(): void
   resetGame(): void
@@ -58,6 +66,7 @@ const dyd = [-1, -1, 1, 1]
 export function GameProvider({ children }) {
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WAITING)
   const [gameState, setGameState] = useState<GameState | undefined>()
+  const fullFeasibles = useRef<MinoPlacement[][]>([])
   const { players, me } = useRoom()
   const { showNotice } = useNotice()
 
@@ -281,26 +290,33 @@ export function GameProvider({ children }) {
   function resetGame(): void {
     setGamePhase(GamePhase.WAITING)
     setGameState(undefined)
+    fullFeasibles.current = []
   }
 
   const currentPlayerId = gameState?.iteration % gameState?.players.length
+  const fullFeasiblePlacements = useMemo(() => {
+    if (!gameState) return undefined
+
+    fullFeasibles.current[currentPlayerId] =
+      getFeasiblePlacements(currentPlayerId)
+
+    return [...fullFeasibles.current]
+  }, [gameState?.iteration])
 
   // After for each player's turn
   useEffect(() => {
     if (!gameState || currentPlayerId === undefined) return
 
-    const feasibles = gameState.players.map((playerStatus) =>
-      getFeasiblePlacements(playerStatus.playerId)
-    )
-
     // Everybody cannot place more
-    if (!feasibles.some((possibilities) => possibilities.length > 0)) {
+    if (
+      !fullFeasiblePlacements.some((possibilities) => possibilities.length > 0)
+    ) {
       finishGame()
       return
     }
 
     // Current player cannot place more
-    if (feasibles[currentPlayerId].length === 0) {
+    if (fullFeasiblePlacements[currentPlayerId].length === 0) {
       showNotice(
         "You don't have any placeable block.",
         5000,
@@ -329,6 +345,7 @@ export function GameProvider({ children }) {
         cellStates,
         myPlayerId,
         currentPlayerId,
+        fullFeasiblePlacements,
         createGame,
         finishGame,
         resetGame,
