@@ -73,7 +73,8 @@ export function SelectedMinoProvider({ children }) {
         case 'D':
           setRotation((rotation) => ((rotation + 90) % 360) as Rotation)
           break
-        case ' ':
+        case 'f':
+        case 'F':
           if (!isFlippedX && !isFlippedY) {
             setIsFlippedX(true)
           } else if (isFlippedX && !isFlippedY) {
