@@ -16,6 +16,9 @@ export const enum Color {
 export interface Mino {
   name: string
   shapes: Coordinate[]
+  isSymmetricX: boolean
+  isSymmetricY: boolean
+  isRotationUseless: boolean
 }
 
 export interface MinoTransform {

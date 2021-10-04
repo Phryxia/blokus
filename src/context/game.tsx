@@ -223,23 +223,30 @@ export function GameProvider({ children }) {
             }
             // try every possible transform
             else {
-              ;[true, false].forEach((isFlippedX) => {
-                ;[true, false].forEach((isFlippedY) => {
-                  ;[0, 90, 180, 270].forEach((rotation: Rotation) => {
-                    const placement = {
-                      mino: baseMino,
-                      position: { x, y },
-                      isFlippedX,
-                      isFlippedY,
-                      rotation,
-                    }
+              ;(baseMino.isSymmetricX ? [false] : [true, false]).forEach(
+                (isFlippedX) => {
+                  ;(baseMino.isSymmetricY ? [false] : [true, false]).forEach(
+                    (isFlippedY) => {
+                      ;(baseMino.isRotationUseless
+                        ? [0]
+                        : [0, 90, 180, 270]
+                      ).forEach((rotation: Rotation) => {
+                        const placement = {
+                          mino: baseMino,
+                          position: { x, y },
+                          isFlippedX,
+                          isFlippedY,
+                          rotation,
+                        }
 
-                    if (isPlaceable(playerId, placement)) {
-                      result.push(placement)
+                        if (isPlaceable(playerId, placement)) {
+                          result.push(placement)
+                        }
+                      })
                     }
-                  })
-                })
-              })
+                  )
+                }
+              )
             }
           }
         )

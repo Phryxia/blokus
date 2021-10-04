@@ -31,7 +31,7 @@ export function useSelectedMino() {
 }
 
 export function SelectedMinoProvider({ children }) {
-  const { gameState, currentPlayerId } = useGame()
+  const { gameState, currentPlayerId, fullFeasiblePlacements } = useGame()
   const { me, isSingleMode } = useRoom()
   const [selectedMino, setSelectedMino] = useState<Mino | undefined>()
   const [isFlippedX, setIsFlippedX] = useState<boolean>(false)
@@ -97,9 +97,17 @@ export function SelectedMinoProvider({ children }) {
 
   function changeSelectedMino(mino: Mino): void {
     setSelectedMino(mino)
-    setIsFlippedX(false)
-    setIsFlippedY(false)
-    setRotation(0)
+
+    const feasiblePlacements = fullFeasiblePlacements[currentPlayerId]
+    if (feasiblePlacements?.length === 1) {
+      setIsFlippedX(!!feasiblePlacements[0].isFlippedX)
+      setIsFlippedY(!!feasiblePlacements[0].isFlippedY)
+      setRotation(feasiblePlacements[0].rotation ?? 0)
+    } else {
+      setIsFlippedX(false)
+      setIsFlippedY(false)
+      setRotation(0)
+    }
   }
 
   return (

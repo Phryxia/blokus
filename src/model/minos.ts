@@ -5,6 +5,9 @@ export const MINOS: Mino[] = [
   {
     name: '1x1I',
     shapes: [{ x: 0, y: 0 }],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: true,
   },
   // 1 x 2
   {
@@ -13,6 +16,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 2 L shaped
   {
@@ -22,6 +28,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 0 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 1 x 3
   {
@@ -31,6 +40,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: -1, y: 0 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 2
   {
@@ -41,6 +53,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 1, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: true,
   },
   // 2 x 3 T shape
   {
@@ -51,6 +66,9 @@ export const MINOS: Mino[] = [
       { x: -1, y: 0 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 1 x 4
   {
@@ -61,6 +79,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 2, y: 0 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 3 L shape
   {
@@ -71,6 +92,9 @@ export const MINOS: Mino[] = [
       { x: 2, y: 0 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 3 S shape
   {
@@ -81,6 +105,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 4 L shape
   {
@@ -92,6 +119,9 @@ export const MINOS: Mino[] = [
       { x: 3, y: 0 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 3 T shape
   {
@@ -103,6 +133,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: -1 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 3 L shape
   {
@@ -114,6 +147,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 0, y: 2 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 2 x 4 S (2 + 3)
   {
@@ -125,6 +161,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 1 },
       { x: 2, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: false,
+    isRotationUseless: false,
   },
   // 3 x 3 S (2 + 1 + 2)
   {
@@ -136,6 +175,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 1 },
       { x: -1, y: -1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 1 x 5
   {
@@ -147,6 +189,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 2, y: 0 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 2 b shape
   {
@@ -158,6 +203,9 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 1, y: -1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 3 w shape
   {
@@ -169,6 +217,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 2 u shape
   {
@@ -180,6 +231,9 @@ export const MINOS: Mino[] = [
       { x: -1, y: 1 },
       { x: 1, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
   // 3 x 3 cross
   {
@@ -191,6 +245,9 @@ export const MINOS: Mino[] = [
       { x: 0, y: -1 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: true,
+    isSymmetricY: true,
+    isRotationUseless: true,
   },
   // 3 x 3 f shape
   {
@@ -202,6 +259,9 @@ export const MINOS: Mino[] = [
       { x: -1, y: 0 },
       { x: 1, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: false,
+    isRotationUseless: false,
   },
   // 2 x 4 T shape
   {
@@ -213,6 +273,9 @@ export const MINOS: Mino[] = [
       { x: 2, y: 0 },
       { x: 0, y: 1 },
     ],
+    isSymmetricX: false,
+    isSymmetricY: true,
+    isRotationUseless: false,
   },
 ]
 
@@ -256,7 +319,7 @@ export function rotate(mino: Mino, rotation: Rotation): Mino {
       break
   }
   return {
-    name: mino.name,
+    ...mino,
     shapes: mino.shapes.map(({ x, y }) => ({
       x: c * x - s * y,
       y: s * x + c * y,
@@ -266,14 +329,14 @@ export function rotate(mino: Mino, rotation: Rotation): Mino {
 
 export function flipX(mino: Mino): Mino {
   return {
-    name: mino.name,
+    ...mino,
     shapes: mino.shapes.map(({ x, y }) => ({ x: -x, y })),
   }
 }
 
 export function flipY(mino: Mino): Mino {
   return {
-    name: mino.name,
+    ...mino,
     shapes: mino.shapes.map(({ x, y }) => ({ x, y: -y })),
   }
 }
