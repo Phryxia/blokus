@@ -33,7 +33,7 @@ export default function Board() {
   }
 
   const feasiblePlacements = selectedMino
-    ? getFeasiblePlacements(currentPlayerId, selectedMino, currentTransform)
+    ? getFeasiblePlacements(currentPlayerId, selectedMino)
     : []
   const highlightMap = new Map<string, boolean>()
   feasiblePlacements.forEach(
