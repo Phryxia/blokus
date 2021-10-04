@@ -88,6 +88,60 @@
   height: 30px;
 }
 
+/* Game Result */
+.player-result-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 256px;
+  padding-left: 0;
+  padding-right: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-result-container .title {
+  font-size: 32px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.player-result-container button {
+  width: 128px;
+  height: 30px;
+}
+
+.player-result-container .record {
+  width: 100%;
+  display: flex;
+  justify-content: stretch;
+  padding: 5px 20%;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.player-result-container .record > * {
+  display: inline-block;
+  flex: 1;
+}
+
+.player-result-container .record *:nth-child(1) {
+  flex: 0 0 20px;
+}
+
+.player-result-container .record *:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-result-container .record *:last-child {
+  text-align: right;
+}
+
 /* player status's minos */
 .mino-container {
   flex-basis: 80%;

@@ -37,6 +37,7 @@ export interface Player {
 
 export interface GameState {
   startTime: Date
+  endTime?: Date
   players: {
     playerId: number
     player: Player

@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useMemo } from 'react'
+import { useState, createContext, useContext, useMemo, useEffect } from 'react'
 import {
   BOARD_SIZE,
   Color,
@@ -12,6 +12,7 @@ import {
 import { shuffle } from '../utils'
 import { MINOS, transform } from '../model/minos'
 import { useRoom } from '../context/room'
+import { useNotice } from './notice'
 
 interface GameContextInterface {
   gameState?: GameState
@@ -20,6 +21,8 @@ interface GameContextInterface {
   myPlayerId: number // If I'm not in this game, -1.
   currentPlayerId?: number
   createGame(): void
+  finishGame(): void
+  resetGame(): void
   isPlaceable(playerId: number, placement: MinoPlacement): boolean
   getFeasiblePlacements(
     playerId: number,
@@ -56,6 +59,7 @@ export function GameProvider({ children }) {
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WAITING)
   const [gameState, setGameState] = useState<GameState | undefined>()
   const { players, me } = useRoom()
+  const { showNotice } = useNotice()
 
   const myPlayerId =
     gameState?.players.findIndex(
@@ -73,9 +77,7 @@ export function GameProvider({ children }) {
         .map((player, index) => ({
           playerId: index,
           player,
-          color: [Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN][
-            orders[index]
-          ],
+          color: [Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN][index],
           remainMinos: [...MINOS],
           placements: [],
         })),
@@ -261,6 +263,64 @@ export function GameProvider({ children }) {
     })
   }
 
+  function skip(): void {
+    setGameState({
+      ...gameState,
+      iteration: (gameState.iteration + 1) % gameState.players.length,
+    })
+  }
+
+  function finishGame(): void {
+    setGamePhase(GamePhase.FINISHED)
+    setGameState({
+      ...gameState,
+      endTime: new Date(),
+    })
+  }
+
+  function resetGame(): void {
+    setGamePhase(GamePhase.WAITING)
+    setGameState(undefined)
+  }
+
+  const currentPlayerId = gameState?.iteration % gameState?.players.length
+
+  // After for each player's turn
+  useEffect(() => {
+    if (!gameState || currentPlayerId === undefined) return
+
+    const feasibles = gameState.players.map((playerStatus) =>
+      getFeasiblePlacements(playerStatus.playerId)
+    )
+
+    // Everybody cannot place more
+    if (!feasibles.some((possibilities) => possibilities.length > 0)) {
+      finishGame()
+      return
+    }
+
+    // Current player cannot place more
+    if (feasibles[currentPlayerId].length === 0) {
+      showNotice(
+        "You don't have any placeable block.",
+        5000,
+        {
+          width: '360px',
+          height: '200px',
+        },
+        [gameState.players[currentPlayerId].color]
+      )
+      skip()
+      return
+    }
+
+    if (gameState.players[currentPlayerId].player.isAi) {
+      setTimeout(() => {
+        console.log('do something')
+      }, 500)
+    }
+  }, [currentPlayerId])
+
   return (
     <GameContext.Provider
       value={{
@@ -268,8 +328,10 @@ export function GameProvider({ children }) {
         gamePhase,
         cellStates,
         myPlayerId,
-        currentPlayerId: gameState?.iteration % gameState?.players.length,
+        currentPlayerId,
         createGame,
+        finishGame,
+        resetGame,
         isPlaceable,
         getFeasiblePlacements,
         place,

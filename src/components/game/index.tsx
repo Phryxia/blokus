@@ -7,6 +7,7 @@ import { useRoom } from '@context/room'
 import SimpleAlert from '@components/shared/simpleAlert'
 import { GamePhase, useGame } from '@context/game'
 import { useState } from 'react'
+import GameResult from './result'
 
 const cx = classnames.bind(styles)
 
@@ -42,6 +43,7 @@ export default function GameRoom() {
               onConfirm={handleStartClick}
             />
           )}
+          {gamePhase === GamePhase.FINISHED && <GameResult />}
         </div>
         <div className={cx('players-container')}>
           <PlayerStatus position={2} />

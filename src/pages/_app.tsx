@@ -1,9 +1,12 @@
-import '../styles/globals.css'
+import NoticeProvider from '@context/notice'
+import '@styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
   return (
     <div className="root">
-      <Component {...pageProps} />
+      <NoticeProvider>
+        <Component {...pageProps} />
+      </NoticeProvider>
     </div>
   )
 }
