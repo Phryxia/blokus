@@ -182,13 +182,9 @@
   height: max-content;
   background: none;
   border: none;
-  padding-right: 10px;
-  padding-bottom: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
   cursor: pointer;
-}
-
-.mino-button:disable {
-  background: gray;
 }
 
 .selected-mino {

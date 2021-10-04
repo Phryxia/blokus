@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
-import styles from '../../../styles/game.module.css'
-import { Color, Mino } from '../../../model'
-import MinoComponent from '../../mino'
+import styles from '@styles/game.module.css'
+import { Color, Mino } from '@model/index'
+import MinoComponent from '@components/mino'
 
 const cx = classnames.bind(styles)
 
@@ -24,7 +24,12 @@ export default function MinoButton({
       onClick={() => onClick(mino)}
       className={cx('mino-button')}
     >
-      <MinoComponent mino={mino} isBiased cellSize={20} color={color} />
+      <MinoComponent
+        mino={mino}
+        isBiased
+        cellSize={20}
+        color={isDisabled ? Color.WHITE : color}
+      />
     </button>
   )
 }

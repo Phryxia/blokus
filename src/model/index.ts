@@ -10,6 +10,7 @@ export const enum Color {
   GREEN = 'green',
   BLUE = 'blue',
   YELLOW = 'yellow',
+  WHITE = 'white',
 }
 
 export interface Mino {

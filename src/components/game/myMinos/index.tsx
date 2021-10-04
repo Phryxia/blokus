@@ -5,11 +5,12 @@ import { useRoom } from '@context/room'
 import MinoButton from './minoButton'
 import { Mino } from '@model/index'
 import { useSelectedMino } from '@context/selectedMino'
+import { useMemo } from 'react'
 
 const cx = classnames.bind(styles)
 
 export default function MyMinos() {
-  const { gameState, currentPlayerId } = useGame()
+  const { gameState, currentPlayerId, getFeasiblePlacements } = useGame()
   const { me, isSingleMode } = useRoom()
   const { setSelectedMino } = useSelectedMino()
 
@@ -21,6 +22,20 @@ export default function MyMinos() {
     setSelectedMino(mino)
   }
 
+  const isDisabled: Record<string, boolean> = useMemo(() => {
+    const result: Record<string, boolean> = {}
+
+    if (!myPlayerStatus?.remainMinos) return result
+
+    myPlayerStatus.remainMinos.forEach((mino) => {
+      if (getFeasiblePlacements(currentPlayerId, mino).length === 0) {
+        result[mino.name] = true
+      }
+    })
+
+    return result
+  }, [myPlayerStatus?.remainMinos])
+
   return (
     <div className={classnames(cx('lower-display'), 'window')}>
       <div className={cx('my-minos')}>
@@ -31,6 +46,7 @@ export default function MyMinos() {
               mino={mino}
               onClick={handleMinoClick}
               color={myPlayerStatus.color}
+              isDisabled={isDisabled[mino.name]}
             />
           ))}
       </div>
