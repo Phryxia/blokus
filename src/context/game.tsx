@@ -66,9 +66,11 @@ const dyd = [-1, -1, 1, 1]
 export function GameProvider({ children }) {
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WAITING)
   const [gameState, setGameState] = useState<GameState | undefined>()
-  const fullFeasibles = useRef<MinoPlacement[][]>([])
   const { players, me } = useRoom()
   const { showNotice, close } = useNotice()
+
+  const fullFeasibles = useRef<MinoPlacement[][]>([])
+  const isPlayerWarned = useRef<boolean[]>([])
 
   const myPlayerId =
     gameState?.players.findIndex(
@@ -93,6 +95,8 @@ export function GameProvider({ children }) {
         })),
     })
     setGamePhase(GamePhase.PLAYING)
+    fullFeasibles.current = []
+    isPlayerWarned.current = []
   }
 
   const cellStates = useMemo(() => {
@@ -302,7 +306,6 @@ export function GameProvider({ children }) {
   function resetGame(): void {
     setGamePhase(GamePhase.WAITING)
     setGameState(undefined)
-    fullFeasibles.current = []
   }
 
   const currentPlayerId = gameState?.iteration % gameState?.players.length
@@ -329,16 +332,19 @@ export function GameProvider({ children }) {
 
     // Current player cannot place more
     if (fullFeasiblePlacements[currentPlayerId].length === 0) {
-      showNotice(
-        "You don't have any placeable block.",
-        5000,
-        {
+      if (isPlayerWarned.current[currentPlayerId]) {
+        skip()
+        return
+      }
+      isPlayerWarned.current[currentPlayerId] = true
+      showNotice("You don't have any placeable block.", 5000, {
+        style: {
           width: '360px',
           height: '200px',
         },
-        [gameState.players[currentPlayerId].color]
-      )
-      skip()
+        classNames: [gameState.players[currentPlayerId].color],
+        onClose: skip,
+      })
       return
     }
 
@@ -347,7 +353,7 @@ export function GameProvider({ children }) {
         console.log('do something')
       }, 500)
     }
-  }, [currentPlayerId])
+  }, [gameState?.iteration])
 
   return (
     <GameContext.Provider

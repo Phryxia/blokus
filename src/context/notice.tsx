@@ -1,13 +1,14 @@
 import SimpleNotice from '@components/shared/simpleNotice'
 import { createContext, useContext, useRef, useState } from 'react'
 
+interface NoticeOption {
+  style?: Record<string, string>
+  classNames?: string[]
+  onClose?(): void
+}
+
 interface NoticeContextInterface {
-  showNotice(
-    message: string,
-    time: number,
-    styles?: Record<string, string>,
-    classNames?: string[]
-  ): void
+  showNotice(message: string, time: number, option?: NoticeOption): void
   close(): void
 }
 
@@ -23,22 +24,31 @@ export default function NoticeProvider({ children }) {
   const [style, setStyle] = useState<any>({})
   const [classNames, setClassNames] = useState<string[] | undefined>()
   const timerRef = useRef<NodeJS.Timer | undefined>(undefined)
+  const onCloseRef = useRef<Function | undefined>()
 
   function showNotice(
     message: string,
     time: number,
-    style?: Record<string, string>,
-    classNames?: string[]
+    option: NoticeOption = {}
   ): void {
+    const { style, classNames, onClose } = option
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      onCloseRef.current?.()
+    }
+
     setMessage(message)
     setIsShown(true)
     setStyle(style)
     setClassNames(classNames)
-
-    if (timerRef.current) clearTimeout(timerRef.current)
+    onCloseRef.current = onClose
 
     timerRef.current = setTimeout(() => {
       setIsShown(false)
+      onCloseRef.current?.()
+      onCloseRef.current = undefined
+      timerRef.current = undefined
     }, time)
   }
 
@@ -46,6 +56,9 @@ export default function NoticeProvider({ children }) {
     if (timerRef.current) clearTimeout(timerRef.current)
 
     setIsShown(false)
+    onCloseRef.current?.()
+    onCloseRef.current = undefined
+    timerRef.current = undefined
   }
 
   return (

@@ -20,3 +20,8 @@
   height: 30px;
   bottom: 20px;
 }
+
+.notice {
+  cursor: pointer;
+  top: 40%;
+}
