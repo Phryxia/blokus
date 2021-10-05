@@ -48,7 +48,7 @@ export default function PlayerEditor({
             <input
               type="checkbox"
               checked={isAi}
-              onClick={() => setIsAi(!isAi)}
+              onChange={() => setIsAi(!isAi)}
             />
           </div>
           <button disabled={!name} onClick={handleConfirmClick}>

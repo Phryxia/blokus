@@ -42,14 +42,17 @@ export interface Player {
 export interface GameState {
   startTime: Date
   endTime?: Date
-  players: {
-    playerId: number
-    player: Player
-    color: Color
-    remainMinos: Mino[]
-    placements: MinoPlacement[]
-  }[]
+  players: PlayerGameState[]
   iteration: number // order[iterations] is current turn player
+}
+
+export interface PlayerGameState {
+  playerId: number
+  player: Player
+  color: Color
+  remainMinos: Mino[]
+  placements: MinoPlacement[]
+  is1x1PlacedLast: boolean
 }
 
 export const BOARD_SIZE = 20

@@ -89,6 +89,7 @@ export function GameProvider({ children }) {
           color: [Color.BLUE, Color.YELLOW, Color.RED, Color.GREEN][index],
           remainMinos: [...MINOS],
           placements: [],
+          is1x1PlacedLast: false,
         })),
     })
     setGamePhase(GamePhase.PLAYING)
@@ -274,6 +275,9 @@ export function GameProvider({ children }) {
             (mino) => mino.name !== placement.mino.name
           ),
           placements: [...playerStatus.placements, placement],
+          is1x1PlacedLast:
+            playerStatus.remainMinos.length === 1 &&
+            placement.mino.name === '1x1',
         }
       }),
     })

@@ -3,7 +3,7 @@ import { Mino, MinoTransform, Rotation } from './'
 export const MINOS: Mino[] = [
   // 1 x 1
   {
-    name: '1x1I',
+    name: '1x1',
     shapes: [{ x: 0, y: 0 }],
     isSymmetricX: true,
     isSymmetricY: true,

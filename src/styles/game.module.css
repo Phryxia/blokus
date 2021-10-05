@@ -94,8 +94,8 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 320px;
-  height: 256px;
+  width: 500px;
+  height: 320px;
   padding-left: 0;
   padding-right: 0;
 
@@ -111,6 +111,11 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+.player-result-container .time {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.3);
+}
+
 .player-result-container button {
   width: 128px;
   height: 30px;
@@ -120,26 +125,64 @@
   width: 100%;
   display: flex;
   justify-content: stretch;
-  padding: 5px 20%;
+  padding: 5px 10%;
   color: rgba(255, 255, 255, 0.7);
 }
 
-.player-result-container .record > * {
-  display: inline-block;
-  flex: 1;
+.player-result-container .record.header {
+  color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.1);
 }
 
+.player-result-container .record > * {
+  position: relative;
+  display: inline-block;
+  flex: 1;
+  text-align: center;
+}
+
+/* rank */
 .player-result-container .record *:nth-child(1) {
   flex: 0 0 20px;
 }
 
+/* name */
 .player-result-container .record *:nth-child(2) {
+  flex: 0 0 120px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.player-result-container .record *:last-child {
-  text-align: right;
+.player-result-container .record .tooltip {
+  z-index: 9999;
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 200px;
+  height: max-content;
+  transform: translate(-50%, -120%);
+  border-radius: 5px;
+  background: #333333;
+  white-space: normal;
+  padding: 10px;
+  color: #dedede;
+  overflow: visible;
+}
+
+.player-result-container .record span:hover .tooltip {
+  display: inline-block;
+}
+
+.tooltip::after {
+  content: ' ';
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 1px);
+  margin-left: -8px;
+  border: 8px solid;
+  border-color: #333333 transparent transparent transparent;
 }
 
 /* player status's minos */

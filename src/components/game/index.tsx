@@ -6,7 +6,7 @@ import Board from './board'
 import { useRoom } from '@context/room'
 import SimpleAlert from '@components/shared/simpleAlert'
 import { GamePhase, useGame } from '@context/game'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import GameResult from './result'
 
 const cx = classnames.bind(styles)
@@ -15,7 +15,7 @@ export default function GameRoom() {
   const [alertMessage, setAlertMessage] = useState<string>(
     'Welcome to the blokus!'
   )
-  const { isSingleMode, players } = useRoom()
+  const { players } = useRoom()
   const { createGame, gamePhase } = useGame()
 
   function handleStartClick(): void {
@@ -27,6 +27,12 @@ export default function GameRoom() {
     createGame()
   }
 
+  useEffect(() => {
+    if (gamePhase === GamePhase.WAITING) {
+      setAlertMessage('Welcome to the blokus!')
+    }
+  }, [gamePhase])
+
   return (
     <div className={cx('root')}>
       <div className={cx('upper-display')}>
@@ -36,7 +42,7 @@ export default function GameRoom() {
         </div>
         <div className={cx('board')}>
           <Board />
-          {isSingleMode && gamePhase === GamePhase.WAITING && (
+          {gamePhase === GamePhase.WAITING && (
             <SimpleAlert
               message={alertMessage}
               confirmMessage="Start"
