@@ -8,6 +8,7 @@ import SimpleAlert from '@components/shared/simpleAlert'
 import { GamePhase, useGame } from '@context/game'
 import { useEffect, useState } from 'react'
 import GameResult from './result'
+import { useAi } from 'src/utils/ai'
 
 const cx = classnames.bind(styles)
 
@@ -16,7 +17,8 @@ export default function GameRoom() {
     'Welcome to the blokus!'
   )
   const { players } = useRoom()
-  const { createGame, gamePhase } = useGame()
+  const { createGame, gamePhase, currentPlayerId, gameState } = useGame()
+  const runAi = useAi('stupid')
 
   function handleStartClick(): void {
     if (players.length < 2) {
@@ -32,6 +34,15 @@ export default function GameRoom() {
       setAlertMessage('Welcome to the blokus!')
     }
   }, [gamePhase])
+
+  useEffect(() => {
+    if (
+      gamePhase === GamePhase.PLAYING &&
+      gameState?.players[currentPlayerId].player.isAi
+    ) {
+      runAi()
+    }
+  }, [currentPlayerId])
 
   return (
     <div className={cx('root')}>

@@ -332,7 +332,10 @@ export function GameProvider({ children }) {
 
     // Current player cannot place more
     if (fullFeasiblePlacements[currentPlayerId].length === 0) {
-      if (isPlayerWarned.current[currentPlayerId]) {
+      if (
+        isPlayerWarned.current[currentPlayerId] ||
+        gameState.players[currentPlayerId].player.isAi
+      ) {
         skip()
         return
       }
@@ -346,12 +349,6 @@ export function GameProvider({ children }) {
         onClose: skip,
       })
       return
-    }
-
-    if (gameState.players[currentPlayerId].player.isAi) {
-      setTimeout(() => {
-        console.log('do something')
-      }, 500)
     }
   }, [gameState?.iteration])
 
