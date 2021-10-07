@@ -1,3 +1,5 @@
+import { AiDifficulty, AiOption } from '@utils/ai'
+
 export interface Coordinate {
   x: number
   y: number
@@ -37,6 +39,8 @@ export interface Player {
   name: string
   isAi?: boolean
   position: number // left up: 0, left down: 1, right up: 2, right down: 3
+  aiDifficulty?: AiDifficulty
+  aiOption?: AiOption
 }
 
 export interface GameState {

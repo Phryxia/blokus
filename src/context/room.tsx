@@ -1,3 +1,4 @@
+import { AiDifficulty, AiOption } from '@utils/ai'
 import { useEffect, useState, createContext, useContext } from 'react'
 import { Player } from '../model'
 
@@ -5,7 +6,12 @@ interface RoomContextInterface {
   players: Player[]
   me?: Player
   isSingleMode: boolean
-  addPlayer(name: string, position: number, isAi?: boolean): Player
+  addPlayer(
+    name: string,
+    position: number,
+    aiDifficulty?: AiDifficulty,
+    aiOption?: AiOption
+  ): Player
   removePlayer(player: Player): void
   signIn(name: string, position: number): Promise<void>
 }
@@ -20,8 +26,19 @@ export function RoomProvider({ children, isSingleMode }) {
   const [players, setPlayers] = useState<Player[]>([])
   const [me, setMe] = useState<Player | undefined>()
 
-  function addPlayer(name: string, position: number, isAi?: boolean): Player {
-    const newPlayer = { name, position, isAi }
+  function addPlayer(
+    name: string,
+    position: number,
+    aiDifficulty?: AiDifficulty,
+    aiOption?: AiOption
+  ): Player {
+    const newPlayer = {
+      name,
+      position,
+      isAi: !!aiDifficulty,
+      aiDifficulty,
+      aiOption,
+    }
     setPlayers([...players, newPlayer])
     return newPlayer
   }
@@ -31,7 +48,7 @@ export function RoomProvider({ children, isSingleMode }) {
   }
 
   async function signIn(name: string, position: number): Promise<void> {
-    setMe(addPlayer(name, position, false))
+    setMe(addPlayer(name, position))
   }
 
   return (

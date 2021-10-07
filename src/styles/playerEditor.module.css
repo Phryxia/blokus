@@ -1,0 +1,47 @@
+.container {
+  flex-basis: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0 20%;
+}
+
+.container .inputs {
+  display: flex;
+  justify-content: space-between;
+  vertical-align: middle;
+  margin-bottom: 10px;
+}
+
+.container input {
+  height: 100%;
+}
+
+.container input[type='text'] {
+  width: 70%;
+}
+
+.container button {
+  height: 30px;
+}
+
+.ai {
+  margin-bottom: 10px;
+}
+
+.ai-row {
+  width: 100%;
+  display: flex;
+  justify-content: stretch;
+  margin-bottom: 5px;
+}
+
+.ai-row input,
+.ai-row select {
+  width: 65px;
+}
+
+.ai-row label {
+  flex: 1;
+}

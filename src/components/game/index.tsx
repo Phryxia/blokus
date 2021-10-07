@@ -8,7 +8,7 @@ import SimpleAlert from '@components/shared/simpleAlert'
 import { GamePhase, useGame } from '@context/game'
 import { useEffect, useState } from 'react'
 import GameResult from './result'
-import { useAi } from 'src/utils/ai'
+import {  useAi } from 'src/utils/ai'
 
 const cx = classnames.bind(styles)
 
@@ -19,7 +19,10 @@ export default function GameRoom() {
   const { players } = useRoom()
   const { createGame, gamePhase, currentPlayerId, gameState, updater } =
     useGame()
-  const runAi = useAi('advanced')
+  const runAi = useAi(
+    players[currentPlayerId]?.aiDifficulty,
+    players[currentPlayerId]?.aiOption
+  )
 
   function handleStartClick(): void {
     if (players.length < 2) {
