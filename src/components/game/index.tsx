@@ -17,12 +17,13 @@ export default function GameRoom() {
     'Welcome to the blokus!'
   )
   const { players } = useRoom()
-  const { createGame, gamePhase, currentPlayerId, gameState } = useGame()
+  const { createGame, gamePhase, currentPlayerId, gameState, updater } =
+    useGame()
   const runAi = useAi('stupid')
 
   function handleStartClick(): void {
     if (players.length < 2) {
-      setAlertMessage('Please add more than two players to start.')
+      setAlertMessage('Please add at least 2 players to start.')
       return
     }
 
@@ -42,7 +43,7 @@ export default function GameRoom() {
     ) {
       runAi()
     }
-  }, [currentPlayerId])
+  }, [currentPlayerId, updater])
 
   return (
     <div className={cx('root')}>

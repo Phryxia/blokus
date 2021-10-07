@@ -16,3 +16,13 @@ export function shuffle<T>(array: T[]): T[] {
 
   return result
 }
+
+export function deepcopy<T>(object: T): T {
+  if (typeof object !== 'object') return object
+
+  const result: Partial<T> = {}
+  for (const key in object) {
+    result[key] = deepcopy(object[key])
+  }
+  return result as T
+}

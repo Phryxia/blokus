@@ -30,7 +30,7 @@ export function useAi(difficulty: 'stupid' | 'advanced') {
         const selectedPlacement =
           filteredPlacements[randomInt(0, filteredPlacements.length - 1)]
         place(currentPlayerId, selectedPlacement)
-      }, 500)
+      }, 1)
     }
   } else {
     return () => {}

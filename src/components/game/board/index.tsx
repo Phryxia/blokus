@@ -53,7 +53,7 @@ export default function Board() {
   return (
     <div className={classnames(cx('container'), 'window')}>
       <div className={cx('board-wrapper')}>
-        {cellStates.map((row, y) => (
+        {cellStates?.map((row, y) => (
           <div className={cx('row')} key={y}>
             {row.map(({ playerId }, x) => (
               <Cell
