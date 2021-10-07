@@ -17,7 +17,16 @@ export function shuffle<T>(array: T[]): T[] {
   return result
 }
 
+export function getRandomElements<T>(array: T[], num: number): T[] {
+  if (num <= 0) return []
+  if (num === 1) return [array[randomInt(0, array.length - 1)]]
+  return shuffle(array).slice(0, num)
+}
+
 export function deepcopy<T>(object: T): T {
+  if (object instanceof Array)
+    return object.map((element) => deepcopy(element)) as any
+
   if (typeof object !== 'object') return object
 
   const result: Partial<T> = {}

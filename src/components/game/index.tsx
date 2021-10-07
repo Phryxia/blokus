@@ -19,7 +19,7 @@ export default function GameRoom() {
   const { players } = useRoom()
   const { createGame, gamePhase, currentPlayerId, gameState, updater } =
     useGame()
-  const runAi = useAi('stupid')
+  const runAi = useAi('advanced')
 
   function handleStartClick(): void {
     if (players.length < 2) {

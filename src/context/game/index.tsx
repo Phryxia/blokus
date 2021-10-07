@@ -25,6 +25,7 @@ interface GameContextInterface {
     targetGameState?: GameState
   ): MinoPlacement[]
   place(playerId: number, placement: MinoPlacement): void
+  gameWorld?: GameWorld // WARNING: This is mutable object so be careful to use this
 }
 
 export const enum GamePhase {
@@ -132,6 +133,7 @@ export function GameProvider({ children }) {
         getFeasiblePlacements,
         place,
         updater,
+        gameWorld: gameRef.current,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ import {
   PlayerGameState,
 } from '@model/index'
 import { MINOS, transform } from '@model/minos'
-import { shuffle } from '@utils/index'
+import { deepcopy, shuffle } from '@utils/index'
 
 type Quadruple = [number, number, number, number]
 
@@ -32,7 +32,7 @@ export default class GameWorld {
   private fullFeasibles: MinoPlacement[][] = []
   private cellStates: CellState[][]
 
-  public constructor(players: Player[], private onGameFinished: () => void) {
+  public constructor(players: Player[], private onGameFinished?: () => void) {
     this.players = players
     this.createEmptyCells()
 
@@ -54,6 +54,14 @@ export default class GameWorld {
     }
     this.fullFeasibles = []
     this.nextTurn()
+  }
+
+  // Note that this doesn't copy onGameFinished callback
+  public fork(onGameFinished?: () => void): GameWorld {
+    const result = deepcopy(this)
+    result.onGameFinished = onGameFinished
+    Object.setPrototypeOf(result, GameWorld.prototype)
+    return result
   }
 
   private createEmptyCells(): void {
@@ -231,7 +239,7 @@ export default class GameWorld {
 
   private finishGame(): void {
     this.gameState.endTime = new Date()
-    this.onGameFinished()
+    this.onGameFinished?.()
   }
 
   private nextTurn(): number[] {
