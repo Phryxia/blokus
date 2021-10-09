@@ -1,4 +1,5 @@
 import { BOARD_SIZE, Coordinate } from '@model/index'
+import _ from 'lodash'
 
 export function randomInt(minValue: number, maxValue: number): number {
   return Math.floor(Math.random() * (maxValue - minValue) + minValue)
@@ -36,6 +37,15 @@ export class CoordinateMap<T> {
   private data: (T | undefined)[] = new Array<T | undefined>(
     BOARD_SIZE * BOARD_SIZE * 9
   )
+
+  public fork(): CoordinateMap<T> {
+    const result = {
+      ...this,
+      data: _.cloneDeep(this.data),
+    }
+    Object.setPrototypeOf(result, CoordinateMap.prototype)
+    return result
+  }
 
   private key(x: number, y: number): number {
     x += BOARD_SIZE

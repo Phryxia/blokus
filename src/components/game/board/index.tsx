@@ -1,8 +1,9 @@
 import { useSelectedMino } from '@context/selectedMino'
-import { Color } from '@model/index'
+import { BOARD_SIZE, Color } from '@model/index'
 import { transform } from '@model/minos'
 import { CoordinateMap } from '@utils/index'
 import classnames from 'classnames/bind'
+import { ReactNode } from 'react'
 import { useGame } from '../../../context/game'
 import styles from '../../../styles/board.module.css'
 import Cell, { CellDetail } from './cell'
@@ -56,40 +57,53 @@ export default function Board() {
     }
   })
 
+  function renderCellStates() {
+    const result: ReactNode[] = []
+
+    if (!cellStates) return null
+
+    for (let y = 0; y < BOARD_SIZE; ++y) {
+      const row: ReactNode[] = []
+      for (let x = 0; x < BOARD_SIZE; ++x) {
+        const playerId = cellStates.get(x, y).playerId
+        const deco = decoration.get(x, y)
+
+        let color: Color | undefined
+        let detail: CellDetail | undefined
+
+        if (playerId !== undefined) {
+          color = gameState?.players[playerId].color
+          detail = CellDetail.RESERVED
+        } else if (feasiblePlacements.length > 0 && deco) {
+          color = gameState?.players[currentPlayerId].color
+          detail = deco === 'highlight' ? CellDetail.PREVIEW : CellDetail.ANCHOR
+        } else {
+          detail = CellDetail.BLANK
+        }
+
+        row.push(
+          <Cell
+            key={x}
+            color={color}
+            detail={detail}
+            onClick={() => handleCellClick(x, y)}
+          />
+        )
+      }
+
+      result.push(
+        <div className={cx('row')} key={y}>
+          {row}
+        </div>
+      )
+    }
+
+    return result
+  }
+
   return (
     <div className={classnames(cx('container'), 'window')}>
-      <div className={cx('board-wrapper')}>
-        {cellStates?.map((row, y) => (
-          <div className={cx('row')} key={y}>
-            {row.map(({ playerId }, x) => {
-              const deco = decoration.get(x, y)
-
-              let color: Color | undefined
-              let detail: CellDetail | undefined
-
-              if (playerId !== undefined) {
-                color = gameState?.players[playerId].color
-                detail = CellDetail.RESERVED
-              } else if (feasiblePlacements.length > 0 && deco) {
-                color = gameState?.players[currentPlayerId].color
-                detail =
-                  deco === 'highlight' ? CellDetail.PREVIEW : CellDetail.ANCHOR
-              } else {
-                detail = CellDetail.BLANK
-              }
-
-              return (
-                <Cell
-                  key={x}
-                  color={color}
-                  detail={detail}
-                  onClick={() => handleCellClick(x, y)}
-                />
-              )
-            })}
-          </div>
-        ))}
-      </div>
+      <div className={cx('board-wrapper')}>{renderCellStates()}</div>
     </div>
   )
 }

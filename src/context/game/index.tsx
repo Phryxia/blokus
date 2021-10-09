@@ -9,11 +9,12 @@ import {
 import { useRoom } from '@context/room'
 import { useNotice } from '@context/notice'
 import GameWorld from './game'
+import { CoordinateMap } from '@utils/index'
 
 interface GameContextInterface {
   gameState?: GameState
   gamePhase: GamePhase
-  cellStates: CellState[][]
+  cellStates?: CoordinateMap<CellState>
   currentPlayerId?: number
   fullFeasiblePlacements?: MinoPlacement[][] // [playerId][]
   updater: number // For each turn, this value will have random numbers so users can be noticed.

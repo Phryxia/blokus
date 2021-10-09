@@ -10,15 +10,7 @@ import {
   PlayerGameState,
 } from '@model/index'
 import { MINOS, transform } from '@model/minos'
-import {
-  CoordinateMap,
-  dx,
-  dxd,
-  dy,
-  dyd,
-  Quadruple,
-  shuffle,
-} from '@utils/index'
+import { CoordinateMap, dx, dxd, dy, dyd, shuffle } from '@utils/index'
 import _ from 'lodash'
 
 interface CellState {
@@ -31,7 +23,7 @@ export default class GameWorld {
   private players: Player[]
   private gameState: GameState
   private fullFeasibles: MinoPlacement[][] = []
-  private cellStates: CellState[][]
+  private cellStates = new CoordinateMap<CellState>()
   private anchors: Coordinate[][]
 
   public constructor(players: Player[], private onGameFinished?: () => void) {
@@ -67,7 +59,7 @@ export default class GameWorld {
       ...this,
       players: this.players,
       fullFeasibles: [...this.fullFeasibles],
-      cellStates: _.cloneDeep(this.cellStates),
+      cellStates: this.cellStates.fork(),
       anchors: [...this.anchors],
       onGameFinished,
       gameState: {
@@ -85,15 +77,11 @@ export default class GameWorld {
   }
 
   private createEmptyCells(): void {
-    this.cellStates = []
-
     // create empty grid
     for (let y = 0; y < BOARD_SIZE; ++y) {
-      const row: CellState[] = []
       for (let x = 0; x < BOARD_SIZE; ++x) {
-        row.push({ x, y })
+        this.cellStates.set(x, y, { x, y })
       }
-      this.cellStates.push(row)
     }
   }
 
@@ -105,7 +93,7 @@ export default class GameWorld {
       ({ x, y }) => {
         const absX = position.x + x
         const absY = position.y + y
-        this.cellStates[absY][absX].playerId = playerId
+        this.cellStates.get(absX, absY).playerId = playerId
       }
     )
   }
@@ -145,7 +133,7 @@ export default class GameWorld {
       !mino.shapes.some(({ x, y }) => {
         const nx = x + position.x
         const ny = y + position.y
-        return this.cellStates[ny][nx].playerId !== undefined
+        return this.cellStates.get(nx, ny).playerId !== undefined
       }) &&
       !this.isMyBlockExists(playerId, mino.analysis.neighbors, position) &&
       this.isMyBlockExists(playerId, mino.analysis.anchors, position)
@@ -162,7 +150,7 @@ export default class GameWorld {
       const ny = y + yPos
       return (
         GameWorld.isInBoard(nx, ny) &&
-        this.cellStates[ny][nx].playerId === playerId
+        this.cellStates.get(nx, ny).playerId === playerId
       )
     })
   }
@@ -254,13 +242,13 @@ export default class GameWorld {
   private isValidAnchor(playerId: number, { x, y }: Coordinate): boolean {
     return (
       GameWorld.isInBoard(x, y) &&
-      this.cellStates[y][x].playerId === undefined &&
+      this.cellStates.get(x, y).playerId === undefined &&
       ![0, 1, 2, 3].some((index) => {
         const nx = x + dx[index]
         const ny = y + dy[index]
         return (
           GameWorld.isInBoard(nx, ny) &&
-          this.cellStates[ny][nx].playerId === playerId
+          this.cellStates.get(nx, ny).playerId === playerId
         )
       }) &&
       [0, 1, 2, 3].some((index) => {
@@ -268,7 +256,7 @@ export default class GameWorld {
         const ny = y + dyd[index]
         return (
           !GameWorld.isInBoard(nx, ny) ||
-          this.cellStates[ny][nx].playerId === playerId
+          this.cellStates.get(nx, ny).playerId === playerId
         )
       })
     )
@@ -319,7 +307,7 @@ export default class GameWorld {
     return this.gameState
   }
 
-  public getCellStates(): CellState[][] {
+  public getCellStates(): CoordinateMap<CellState> {
     return this.cellStates
   }
 
