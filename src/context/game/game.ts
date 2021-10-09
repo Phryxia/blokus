@@ -10,7 +10,15 @@ import {
   PlayerGameState,
 } from '@model/index'
 import { MINOS, transform } from '@model/minos'
-import { dx, dxd, dy, dyd, Quadruple, shuffle } from '@utils/index'
+import {
+  CoordinateMap,
+  dx,
+  dxd,
+  dy,
+  dyd,
+  Quadruple,
+  shuffle,
+} from '@utils/index'
 import _ from 'lodash'
 
 interface CellState {
@@ -55,10 +63,25 @@ export default class GameWorld {
 
   // Note that this doesn't copy onGameFinished callback
   public fork(onGameFinished?: () => void): GameWorld {
-    const result = _.cloneDeep(this)
-    result.onGameFinished = onGameFinished
+    const result = {
+      ...this,
+      players: this.players,
+      fullFeasibles: [...this.fullFeasibles],
+      cellStates: _.cloneDeep(this.cellStates),
+      anchors: [...this.anchors],
+      onGameFinished,
+      gameState: {
+        ...this.gameState,
+        players: this.gameState.players.map((playerStatus) => ({
+          ...playerStatus,
+          remainMinos: [...playerStatus.remainMinos],
+          placements: [...playerStatus.placements],
+        })),
+      },
+    }
+
     Object.setPrototypeOf(result, GameWorld.prototype)
-    return result
+    return result as GameWorld
   }
 
   private createEmptyCells(): void {
@@ -124,30 +147,23 @@ export default class GameWorld {
         const ny = y + position.y
         return this.cellStates[ny][nx].playerId !== undefined
       }) &&
-      !this.isSomeMyBlockExistsAt(playerId, mino, position, dx, dy) &&
-      this.isSomeMyBlockExistsAt(playerId, mino, position, dxd, dyd)
+      !this.isMyBlockExists(playerId, mino.analysis.neighbors, position) &&
+      this.isMyBlockExists(playerId, mino.analysis.anchors, position)
     )
   }
 
-  private isSomeMyBlockExistsAt(
+  private isMyBlockExists(
     playerId: number,
-    mino: Mino,
-    { x: xPos, y: yPos }: Coordinate,
-    dx: Quadruple,
-    dy: Quadruple
+    cellOffsets: Coordinate[],
+    { x: xPos, y: yPos }: Coordinate
   ): boolean {
-    return mino.shapes.some(({ x, y }) => {
-      for (let i = 0; i < 4; ++i) {
-        const nx = x + xPos + dx[i]
-        const ny = y + yPos + dy[i]
-
-        if (
-          GameWorld.isInBoard(nx, ny) &&
-          this.cellStates[ny][nx].playerId === playerId
-        )
-          return true
-      }
-      return false
+    return cellOffsets.some(({ x, y }) => {
+      const nx = x + xPos
+      const ny = y + yPos
+      return (
+        GameWorld.isInBoard(nx, ny) &&
+        this.cellStates[ny][nx].playerId === playerId
+      )
     })
   }
 
@@ -174,16 +190,15 @@ export default class GameWorld {
         : targetMino.analysis.preTransformed
 
       transformed.map((baseMino) => {
-        const isChecked: Record<string, boolean> = {}
+        const isChecked = new CoordinateMap<boolean>()
 
         this.anchors[playerId].forEach((anchor) => {
           baseMino.shapes.forEach(({ x, y }) => {
             const nx = anchor.x - x
             const ny = anchor.y - y
-            const key = `${nx}-${ny}`
 
-            if (isChecked[key]) return
-            isChecked[key] = true
+            if (isChecked.get(nx, ny)) return
+            isChecked.set(nx, ny, true)
 
             const placement = {
               mino: baseMino,

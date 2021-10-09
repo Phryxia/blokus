@@ -23,6 +23,7 @@ export interface Mino {
     height: number
     preTransformed: Mino[]
     anchors: Coordinate[]
+    neighbors: Coordinate[]
   }
 }
 

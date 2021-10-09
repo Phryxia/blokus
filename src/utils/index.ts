@@ -1,4 +1,4 @@
-import { Coordinate } from '@model/index'
+import { BOARD_SIZE, Coordinate } from '@model/index'
 
 export function randomInt(minValue: number, maxValue: number): number {
   return Math.floor(Math.random() * (maxValue - minValue) + minValue)
@@ -32,7 +32,22 @@ export const dy: Quadruple = [0, 0, -1, 1]
 export const dxd: Quadruple = [-1, 1, 1, -1]
 export const dyd: Quadruple = [-1, -1, 1, 1]
 
-export function getKey(coordinate: Coordinate | number, y?: number): string {
-  if (typeof coordinate === 'object') return `${coordinate.x}-${coordinate.y}`
-  return `${coordinate}-${y}`
+export class CoordinateMap<T> {
+  private data: (T | undefined)[] = new Array<T | undefined>(
+    BOARD_SIZE * BOARD_SIZE * 9
+  )
+
+  private key(x: number, y: number): number {
+    x += BOARD_SIZE
+    y += BOARD_SIZE
+    return y * 3 * BOARD_SIZE + x
+  }
+
+  public get(x: number, y: number): T | undefined {
+    return this.data[this.key(x, y)]
+  }
+
+  public set(x: number, y: number, value: T): void {
+    this.data[this.key(x, y)] = value
+  }
 }

@@ -1,4 +1,4 @@
-import { dx, dy, dxd, dyd, getKey } from '@utils/index'
+import { dx, dy, dxd, dyd, CoordinateMap } from '@utils/index'
 import { Coordinate, Mino, MinoTransform, Rotation } from './'
 
 export const MINOS: Mino[] = [
@@ -269,6 +269,7 @@ export const MINOS: Mino[] = [
               height,
               preTransformed: [],
               anchors: getAnchors(rotatedShape),
+              neighbors: getNeighbors(rotatedShape),
             },
           })
         }
@@ -281,6 +282,7 @@ export const MINOS: Mino[] = [
         ...normalizedMino.analysis,
         preTransformed,
         anchors: getAnchors(normalizedMino.shapes),
+        neighbors: getNeighbors(normalizedMino.shapes),
       },
     }
   })
@@ -344,18 +346,18 @@ function isEquivalent(
   coordinatesA = normalize(coordinatesA)
   coordinatesB = normalize(coordinatesB)
 
-  const isReserved: Record<string, boolean> = {}
+  const isReserved = new CoordinateMap<boolean>()
 
-  coordinatesA.forEach(({ x, y }) => (isReserved[`${x}-${y}`] = true))
-  return !coordinatesB.some(({ x, y }) => !isReserved[`${x}-${y}`])
+  coordinatesA.forEach(({ x, y }) => isReserved.set(x, y, true))
+  return !coordinatesB.some(({ x, y }) => !isReserved.get(x, y))
 }
 
 function getAnchors(coordinates: Coordinate[]): Coordinate[] {
-  const cells: Record<string, boolean> = {}
+  const cells = new CoordinateMap<boolean>()
   const result: Coordinate[] = []
 
   coordinates.forEach((cell) => {
-    cells[getKey(cell)] = true
+    cells.set(cell.x, cell.y, true)
   })
 
   // for each diagonal cells
@@ -366,7 +368,7 @@ function getAnchors(coordinates: Coordinate[]): Coordinate[] {
 
       // there is a cell already or duplication
       if (
-        cells[getKey(nx, ny)] ||
+        cells.get(nx, ny) ||
         result.some(({ x: px, y: py }) => nx === px && ny === py)
       )
         return
@@ -377,11 +379,38 @@ function getAnchors(coordinates: Coordinate[]): Coordinate[] {
           const mx = nx + dx[dd]
           const my = ny + dy[dd]
 
-          if (cells[getKey(mx, my)]) return true
+          if (cells.get(mx, my)) return true
         })
       ) {
         result.push({ x: nx, y: ny })
       }
+    })
+  })
+
+  return result
+}
+
+function getNeighbors(coordinates: Coordinate[]): Coordinate[] {
+  const cells = new CoordinateMap<boolean>()
+  const result: Coordinate[] = []
+
+  coordinates.forEach((cell) => {
+    cells.set(cell.x, cell.y, true)
+  })
+
+  coordinates.forEach(({ x, y }) => {
+    ;[0, 1, 2, 3].forEach((d) => {
+      const nx = x + dx[d]
+      const ny = y + dy[d]
+
+      // there is a cell already or duplication
+      if (
+        cells.get(nx, ny) ||
+        result.some(({ x: px, y: py }) => nx === px && ny === py)
+      )
+        return
+
+      result.push({ x: nx, y: ny })
     })
   })
 
@@ -432,6 +461,7 @@ export function rotate(mino: Mino, rotation: Rotation): Mino {
           ? mino.analysis.width
           : mino.analysis.height,
       anchors: matrixTransform(mino.analysis.anchors, matrix),
+      neighbors: matrixTransform(mino.analysis.neighbors, matrix),
     },
   }
 }
@@ -448,6 +478,7 @@ export function flipX(mino: Mino): Mino {
     analysis: {
       ...mino.analysis,
       anchors: matrixTransform(mino.analysis.anchors, matrix),
+      neighbors: matrixTransform(mino.analysis.neighbors, matrix),
     },
   }
 }
@@ -464,6 +495,7 @@ export function flipY(mino: Mino): Mino {
     analysis: {
       ...mino.analysis,
       anchors: matrixTransform(mino.analysis.anchors, matrix),
+      neighbors: matrixTransform(mino.analysis.neighbors, matrix),
     },
   }
 }

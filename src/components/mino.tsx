@@ -30,9 +30,9 @@ export default function MinoComponent({
         height: `${height * cellSize}${cellSizeUnit}`,
       }}
     >
-      {mino.shapes.map(({ x, y }) => (
+      {mino.shapes.map(({ x, y }, index) => (
         <div
-          key={`${x}-${y}`}
+          key={index}
           className={[cx('mino'), color].join(' ')}
           style={{
             width: `${cellSize}${cellSizeUnit}`,
