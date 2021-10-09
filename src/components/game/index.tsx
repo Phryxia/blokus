@@ -8,7 +8,7 @@ import SimpleAlert from '@components/shared/simpleAlert'
 import { GamePhase, useGame } from '@context/game'
 import { useEffect, useState } from 'react'
 import GameResult from './result'
-import {  useAi } from 'src/utils/ai'
+import { useAi } from 'src/utils/ai'
 
 const cx = classnames.bind(styles)
 

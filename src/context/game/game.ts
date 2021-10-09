@@ -53,8 +53,8 @@ export default class GameWorld {
         })),
     }
     this.fullFeasibles = []
-    this.anchors = players.map(({ position }) => [
-      GameWorld.getStartCorner(position),
+    this.anchors = this.gameState.players.map((playerStatus) => [
+      GameWorld.getStartCorner(playerStatus.player.position),
     ])
     this.nextTurn()
   }
