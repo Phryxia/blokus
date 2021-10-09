@@ -180,39 +180,28 @@ export default class GameWorld {
           : this.gameState.players[playerId].remainMinos
 
         targetMinos.forEach((baseMino) => {
-          const xFlips = transform
-            ? [!!transform.isFlippedX]
-            : baseMino.isSymmetricX
-            ? [false]
-            : [true, false]
-          const yFlips = transform
-            ? [!!transform.isFlippedY]
-            : baseMino.isSymmetricY
-            ? [false]
-            : [true, false]
-          const rotations = transform
-            ? [transform.rotation ?? 0]
-            : baseMino.isRotationUseless
-            ? [0]
-            : [0, 90, 180, 270]
+          if (transform) {
+            const placement = {
+              mino: baseMino,
+              position: { x, y },
+              ...transform,
+            }
 
-          xFlips.forEach((isFlippedX) => {
-            yFlips.forEach((isFlippedY) => {
-              rotations.forEach((rotation: Rotation) => {
-                const placement = {
-                  mino: baseMino,
-                  position: { x, y },
-                  isFlippedX,
-                  isFlippedY,
-                  rotation,
-                }
+            if (this.isPlaceable(playerId, placement)) {
+              result.push(placement)
+            }
+          } else {
+            baseMino.analysis.preTransformed.map((transformedMino) => {
+              const placement = {
+                mino: transformedMino,
+                position: { x, y },
+              }
 
-                if (this.isPlaceable(playerId, placement)) {
-                  result.push(placement)
-                }
-              })
+              if (this.isPlaceable(playerId, placement)) {
+                result.push(placement)
+              }
             })
-          })
+          }
         })
       }
     }

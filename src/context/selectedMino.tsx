@@ -98,7 +98,9 @@ export function SelectedMinoProvider({ children }) {
   function changeSelectedMino(mino: Mino): void {
     setSelectedMino(mino)
 
-    const feasiblePlacements = fullFeasiblePlacements[currentPlayerId]
+    const feasiblePlacements = fullFeasiblePlacements[currentPlayerId].filter(
+      (placement) => placement.mino.name === mino?.name
+    )
     if (feasiblePlacements?.length === 1) {
       setIsFlippedX(!!feasiblePlacements[0].isFlippedX)
       setIsFlippedY(!!feasiblePlacements[0].isFlippedY)
