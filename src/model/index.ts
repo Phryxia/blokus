@@ -22,6 +22,7 @@ export interface Mino {
     width: number
     height: number
     preTransformed: Mino[]
+    anchors: Coordinate[]
   }
 }
 

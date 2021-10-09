@@ -1,3 +1,5 @@
+import { Coordinate } from '@model/index'
+
 export function randomInt(minValue: number, maxValue: number): number {
   return Math.floor(Math.random() * (maxValue - minValue) + minValue)
 }
@@ -23,15 +25,14 @@ export function getRandomElements<T>(array: T[], num: number): T[] {
   return shuffle(array).slice(0, num)
 }
 
-export function deepcopy<T>(object: T): T {
-  if (object instanceof Array)
-    return object.map((element) => deepcopy(element)) as any
+export type Quadruple = [number, number, number, number]
 
-  if (typeof object !== 'object') return object
+export const dx: Quadruple = [-1, 1, 0, 0]
+export const dy: Quadruple = [0, 0, -1, 1]
+export const dxd: Quadruple = [-1, 1, 1, -1]
+export const dyd: Quadruple = [-1, -1, 1, 1]
 
-  const result: Partial<T> = {}
-  for (const key in object) {
-    result[key] = deepcopy(object[key])
-  }
-  return result as T
+export function getKey(coordinate: Coordinate | number, y?: number): string {
+  if (typeof coordinate === 'object') return `${coordinate.x}-${coordinate.y}`
+  return `${coordinate}-${y}`
 }

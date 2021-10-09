@@ -10,14 +10,8 @@ import {
   PlayerGameState,
 } from '@model/index'
 import { MINOS, transform } from '@model/minos'
-import { deepcopy, shuffle } from '@utils/index'
-
-type Quadruple = [number, number, number, number]
-
-const dx: Quadruple = [-1, 1, 0, 0]
-const dy: Quadruple = [0, 0, -1, 1]
-const dxd: Quadruple = [-1, 1, 1, -1]
-const dyd: Quadruple = [-1, -1, 1, 1]
+import { dx, dxd, dy, dyd, Quadruple, shuffle } from '@utils/index'
+import _ from 'lodash'
 
 interface CellState {
   playerId?: number
@@ -61,7 +55,7 @@ export default class GameWorld {
 
   // Note that this doesn't copy onGameFinished callback
   public fork(onGameFinished?: () => void): GameWorld {
-    const result = deepcopy(this)
+    const result = _.cloneDeep(this)
     result.onGameFinished = onGameFinished
     Object.setPrototypeOf(result, GameWorld.prototype)
     return result
@@ -80,21 +74,17 @@ export default class GameWorld {
     }
   }
 
-  private renderCellStates(): void {
+  private renderCellStates(playerId: number, placement: MinoPlacement): void {
     // write every placement
-    this.gameState.players.forEach(({ playerId, placements }) => {
-      placements.forEach(
-        ({ mino, position, rotation, isFlippedX, isFlippedY }) => {
-          mino = transform(mino, { isFlippedX, isFlippedY, rotation })
+    const { mino, isFlippedX, isFlippedY, rotation, position } = placement
 
-          mino.shapes.forEach(({ x, y }) => {
-            const absX = position.x + x
-            const absY = position.y + y
-            this.cellStates[absY][absX].playerId = playerId
-          })
-        }
-      )
-    })
+    transform(mino, { isFlippedX, isFlippedY, rotation }).shapes.forEach(
+      ({ x, y }) => {
+        const absX = position.x + x
+        const absY = position.y + y
+        this.cellStates[absY][absX].playerId = playerId
+      }
+    )
   }
 
   public isPlaceable(
@@ -184,34 +174,29 @@ export default class GameWorld {
         : targetMino.analysis.preTransformed
 
       transformed.map((baseMino) => {
-        const w = Math.floor(baseMino.analysis.width / 2)
-        const h = Math.floor(baseMino.analysis.height / 2)
         const isChecked: Record<string, boolean> = {}
 
         this.anchors[playerId].forEach((anchor) => {
-          for (let y = -h; y <= h; ++y) {
-            for (let x = -w; x <= w; ++x) {
-              const nx = anchor.x + x
-              const ny = anchor.y + y
-              const key = `${nx}-${ny}`
+          baseMino.shapes.forEach(({ x, y }) => {
+            const nx = anchor.x - x
+            const ny = anchor.y - y
+            const key = `${nx}-${ny}`
 
-              if (isChecked[key]) continue
-              isChecked[key] = true
+            if (isChecked[key]) return
+            isChecked[key] = true
 
-              const placement = {
-                mino: baseMino,
-                position: { x: nx, y: ny },
-              }
-
-              if (this.isPlaceable(playerId, placement)) {
-                result.push(placement)
-              }
+            const placement = {
+              mino: baseMino,
+              position: { x: nx, y: ny },
             }
-          }
+
+            if (this.isPlaceable(playerId, placement)) {
+              result.push(placement)
+            }
+          })
         })
       })
     })
-
     return result
   }
 
@@ -229,12 +214,12 @@ export default class GameWorld {
     playerStatus.is1x1PlacedLast =
       playerStatus.remainMinos.length === 0 && placement.mino.name === '1x1'
 
-    this.renderCellStates()
+    this.renderCellStates(playerId, placement)
 
     // update anchor
     this.anchors[playerId] = [
       ...this.anchors[playerId],
-      ...this.makeAnchors(playerId, placement),
+      ...this.makeAnchors(placement),
     ]
     this.anchors = this.anchors.map((anchorsForPlayer, pid) =>
       anchorsForPlayer.filter((anchor) => this.isValidAnchor(pid, anchor))
@@ -243,29 +228,12 @@ export default class GameWorld {
     return this.nextTurn()
   }
 
-  private makeAnchors(
-    playerId: number,
-    placement: MinoPlacement
-  ): Coordinate[] {
-    const result: Coordinate[] = []
+  private makeAnchors(placement: MinoPlacement): Coordinate[] {
     const transformedMino = transform(placement.mino, placement)
-    transformedMino.shapes.forEach(({ x, y }) => {
-      for (let d = 0; d < 4; ++d) {
-        const nx = x + placement.position.x + dxd[d]
-        const ny = y + placement.position.y + dyd[d]
-
-        if (
-          this.isValidAnchor(playerId, { x: nx, y: ny }) &&
-          !result.some(
-            ({ x: reservedX, y: reservedY }) =>
-              nx === reservedX && ny === reservedY
-          )
-        ) {
-          result.push({ x: nx, y: ny })
-        }
-      }
-    })
-    return result
+    return transformedMino.analysis.anchors.map(({ x, y }) => ({
+      x: x + placement.position.x,
+      y: y + placement.position.y,
+    }))
   }
 
   private isValidAnchor(playerId: number, { x, y }: Coordinate): boolean {

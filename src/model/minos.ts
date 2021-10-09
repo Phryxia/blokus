@@ -1,3 +1,4 @@
+import { dx, dy, dxd, dyd, getKey } from '@utils/index'
 import { Coordinate, Mino, MinoTransform, Rotation } from './'
 
 export const MINOS: Mino[] = [
@@ -215,12 +216,12 @@ export const MINOS: Mino[] = [
     ],
   },
 ]
+  // translate cells so that center should be (0, 0)
   .map((basicMino) => {
     const { xMin, width, yMin, height } = getSize(basicMino.shapes)
     const xCenter = Math.floor(width / 2)
     const yCenter = Math.floor(height / 2)
 
-    // Move to the center
     return {
       name: basicMino.name,
       shapes: translate(basicMino.shapes, -xMin - xCenter, -yMin - yCenter),
@@ -230,6 +231,7 @@ export const MINOS: Mino[] = [
       },
     }
   })
+  // create analysis
   .map((normalizedMino) => {
     const preTransformed: Mino[] = []
 
@@ -266,6 +268,7 @@ export const MINOS: Mino[] = [
               width,
               height,
               preTransformed: [],
+              anchors: getAnchors(rotatedShape),
             },
           })
         }
@@ -277,6 +280,7 @@ export const MINOS: Mino[] = [
       analysis: {
         ...normalizedMino.analysis,
         preTransformed,
+        anchors: getAnchors(normalizedMino.shapes),
       },
     }
   })
@@ -346,6 +350,44 @@ function isEquivalent(
   return !coordinatesB.some(({ x, y }) => !isReserved[`${x}-${y}`])
 }
 
+function getAnchors(coordinates: Coordinate[]): Coordinate[] {
+  const cells: Record<string, boolean> = {}
+  const result: Coordinate[] = []
+
+  coordinates.forEach((cell) => {
+    cells[getKey(cell)] = true
+  })
+
+  // for each diagonal cells
+  coordinates.forEach(({ x, y }) => {
+    ;[0, 1, 2, 3].forEach((d) => {
+      const nx = x + dxd[d]
+      const ny = y + dyd[d]
+
+      // there is a cell already or duplication
+      if (
+        cells[getKey(nx, ny)] ||
+        result.some(({ x: px, y: py }) => nx === px && ny === py)
+      )
+        return
+
+      // adjacent cell check
+      if (
+        ![0, 1, 2, 3].some((dd) => {
+          const mx = nx + dx[dd]
+          const my = ny + dy[dd]
+
+          if (cells[getKey(mx, my)]) return true
+        })
+      ) {
+        result.push({ x: nx, y: ny })
+      }
+    })
+  })
+
+  return result
+}
+
 export function getSize(coordinates: Coordinate[]): {
   width: number
   height: number
@@ -374,9 +416,11 @@ export function getSize(coordinates: Coordinate[]): {
 export function rotate(mino: Mino, rotation: Rotation): Mino {
   if (rotation === 0) return mino
 
+  const matrix = getRotationMatrix(rotation)
+
   return {
     ...mino,
-    shapes: matrixTransform(mino.shapes, getRotationMatrix(rotation)),
+    shapes: matrixTransform(mino.shapes, matrix),
     analysis: {
       ...mino.analysis,
       width:
@@ -387,21 +431,40 @@ export function rotate(mino: Mino, rotation: Rotation): Mino {
         rotation === 90 || rotation === 270
           ? mino.analysis.width
           : mino.analysis.height,
+      anchors: matrixTransform(mino.analysis.anchors, matrix),
     },
   }
 }
 
 export function flipX(mino: Mino): Mino {
+  const matrix = [
+    [-1, 0],
+    [0, 1],
+  ]
+
   return {
     ...mino,
-    shapes: mino.shapes.map(({ x, y }) => ({ x: -x, y })),
+    shapes: matrixTransform(mino.shapes, matrix),
+    analysis: {
+      ...mino.analysis,
+      anchors: matrixTransform(mino.analysis.anchors, matrix),
+    },
   }
 }
 
 export function flipY(mino: Mino): Mino {
+  const matrix = [
+    [1, 0],
+    [0, -1],
+  ]
+
   return {
     ...mino,
-    shapes: mino.shapes.map(({ x, y }) => ({ x, y: -y })),
+    shapes: matrixTransform(mino.shapes, matrix),
+    analysis: {
+      ...mino.analysis,
+      anchors: matrixTransform(mino.analysis.anchors, matrix),
+    },
   }
 }
 
