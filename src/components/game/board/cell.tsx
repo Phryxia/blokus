@@ -6,20 +6,35 @@ const cx = classnames.bind(styles)
 
 interface CellProps {
   color?: Color
-  highlightColor?: Color
+  detail: CellDetail
   onClick(): void
 }
 
-export default function Cell({ color, onClick, highlightColor }: CellProps) {
+export const enum CellDetail {
+  BLANK,
+  RESERVED,
+  PREVIEW,
+  ANCHOR,
+}
+
+export default function Cell({ color, onClick, detail }: CellProps) {
   return (
     <div className={classnames(cx('cell'))}>
-      <button className={classnames(cx('inner'), color)} onClick={onClick}>
-        <div
-          className={cx({
-            highlighted: highlightColor,
-            [highlightColor]: highlightColor,
-          })}
-        />
+      <button
+        className={classnames(
+          cx('inner', {
+            highlighted:
+              detail === CellDetail.PREVIEW || detail === CellDetail.ANCHOR,
+            emphasize: detail === CellDetail.ANCHOR,
+            [color]: color,
+          }),
+          color
+        )}
+        onClick={onClick}
+      >
+        {detail === CellDetail.ANCHOR && (
+          <div className={classnames(cx('color-display'))} />
+        )}
       </button>
     </div>
   )

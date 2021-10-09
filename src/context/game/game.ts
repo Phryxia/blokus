@@ -31,6 +31,7 @@ export default class GameWorld {
   private gameState: GameState
   private fullFeasibles: MinoPlacement[][] = []
   private cellStates: CellState[][]
+  private anchors: Coordinate[][]
 
   public constructor(players: Player[], private onGameFinished?: () => void) {
     this.players = players
@@ -53,6 +54,9 @@ export default class GameWorld {
         })),
     }
     this.fullFeasibles = []
+    this.anchors = players.map(({ position }) => [
+      GameWorld.getStartCorner(position),
+    ])
     this.nextTurn()
   }
 
@@ -131,12 +135,12 @@ export default class GameWorld {
         const ny = y + position.y
         return this.cellStates[ny][nx].playerId !== undefined
       }) &&
-      !this.isSomnMyBlockExistsAt(playerId, mino, position, dx, dy) &&
-      this.isSomnMyBlockExistsAt(playerId, mino, position, dxd, dyd)
+      !this.isSomeMyBlockExistsAt(playerId, mino, position, dx, dy) &&
+      this.isSomeMyBlockExistsAt(playerId, mino, position, dxd, dyd)
     )
   }
 
-  private isSomnMyBlockExistsAt(
+  private isSomeMyBlockExistsAt(
     playerId: number,
     mino: Mino,
     { x: xPos, y: yPos }: Coordinate,
@@ -213,7 +217,66 @@ export default class GameWorld {
     playerStatus.is1x1PlacedLast =
       playerStatus.remainMinos.length === 0 && placement.mino.name === '1x1'
 
+    this.renderCellStates()
+
+    // update anchor
+    this.anchors[playerId] = [
+      ...this.anchors[playerId],
+      ...this.makeAnchors(playerId, placement),
+    ]
+    this.anchors = this.anchors.map((anchorsForPlayer, pid) =>
+      anchorsForPlayer.filter((anchor) => this.isValidAnchor(pid, anchor))
+    )
+
     return this.nextTurn()
+  }
+
+  private makeAnchors(
+    playerId: number,
+    placement: MinoPlacement
+  ): Coordinate[] {
+    const result: Coordinate[] = []
+    const transformedMino = transform(placement.mino, placement)
+    transformedMino.shapes.forEach(({ x, y }) => {
+      for (let d = 0; d < 4; ++d) {
+        const nx = x + placement.position.x + dxd[d]
+        const ny = y + placement.position.y + dyd[d]
+
+        if (
+          this.isValidAnchor(playerId, { x: nx, y: ny }) &&
+          !result.some(
+            ({ x: reservedX, y: reservedY }) =>
+              nx === reservedX && ny === reservedY
+          )
+        ) {
+          result.push({ x: nx, y: ny })
+        }
+      }
+    })
+    return result
+  }
+
+  private isValidAnchor(playerId: number, { x, y }: Coordinate): boolean {
+    return (
+      GameWorld.isInBoard(x, y) &&
+      this.cellStates[y][x].playerId === undefined &&
+      ![0, 1, 2, 3].some((index) => {
+        const nx = x + dx[index]
+        const ny = y + dy[index]
+        return (
+          GameWorld.isInBoard(nx, ny) &&
+          this.cellStates[ny][nx].playerId === playerId
+        )
+      }) &&
+      [0, 1, 2, 3].some((index) => {
+        const nx = x + dxd[index]
+        const ny = y + dyd[index]
+        return (
+          !GameWorld.isInBoard(nx, ny) ||
+          this.cellStates[ny][nx].playerId === playerId
+        )
+      })
+    )
   }
 
   private finishGame(): void {
@@ -222,8 +285,6 @@ export default class GameWorld {
   }
 
   private nextTurn(): number[] {
-    this.renderCellStates()
-
     const skippedPlayers: number[] = []
     do {
       this.gameState.iteration =
@@ -269,6 +330,10 @@ export default class GameWorld {
 
   public getFullFeasiblePlacements(): MinoPlacement[][] {
     return this.fullFeasibles
+  }
+
+  public getAnchors(playerId: number): Coordinate[] {
+    return this.anchors[playerId]
   }
 
   public static isInBoard(x: number, y: number): boolean {

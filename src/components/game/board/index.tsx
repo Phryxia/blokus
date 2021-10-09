@@ -1,9 +1,10 @@
 import { useSelectedMino } from '@context/selectedMino'
-import { flipX, flipY, rotate } from '@model/minos'
+import { Color } from '@model/index'
+import { transform } from '@model/minos'
 import classnames from 'classnames/bind'
 import { useGame } from '../../../context/game'
 import styles from '../../../styles/board.module.css'
-import Cell from './cell'
+import Cell, { CellDetail } from './cell'
 
 const cx = classnames.bind(styles)
 
@@ -15,6 +16,7 @@ export default function Board() {
     getFeasiblePlacements,
     place,
     isPlaceable,
+    getAnchors,
   } = useGame()
   const { selectedMino, setSelectedMino, currentTransform } = useSelectedMino()
 
@@ -35,38 +37,57 @@ export default function Board() {
   const feasiblePlacements = selectedMino
     ? getFeasiblePlacements(currentPlayerId, selectedMino)
     : []
-  const highlightMap = new Map<string, boolean>()
+  const decoration = new Map<string, string>()
   feasiblePlacements.forEach(
     ({ mino, position, isFlippedX, isFlippedY, rotation }) => {
-      if (isFlippedX) mino = flipX(mino)
-      if (isFlippedY) mino = flipY(mino)
-      if (rotation) mino = rotate(mino, rotation)
+      mino = transform(mino, { isFlippedX, isFlippedY, rotation })
 
       mino.shapes.forEach(({ x, y }) => {
         const nx = x + position.x
         const ny = y + position.y
-        highlightMap.set(`${nx}-${ny}`, true)
+        decoration.set(`${nx}-${ny}`, 'highlight')
       })
     }
   )
+  getAnchors(currentPlayerId).forEach(({ x, y }) => {
+    const key = `${x}-${y}`
+    if (decoration.get(key) === 'highlight') {
+      decoration.set(key, 'emphasize')
+    }
+  })
 
   return (
     <div className={classnames(cx('container'), 'window')}>
       <div className={cx('board-wrapper')}>
         {cellStates?.map((row, y) => (
           <div className={cx('row')} key={y}>
-            {row.map(({ playerId }, x) => (
-              <Cell
-                key={x}
-                color={gameState?.players[playerId]?.color}
-                highlightColor={
-                  highlightMap.get(`${x}-${y}`)
-                    ? gameState?.players[currentPlayerId]?.color
-                    : undefined
-                }
-                onClick={() => handleCellClick(x, y)}
-              />
-            ))}
+            {row.map(({ playerId }, x) => {
+              const key = `${x}-${y}`
+              const deco = decoration.get(key)
+
+              let color: Color | undefined
+              let detail: CellDetail | undefined
+
+              if (playerId !== undefined) {
+                color = gameState?.players[playerId].color
+                detail = CellDetail.RESERVED
+              } else if (feasiblePlacements.length > 0 && deco) {
+                color = gameState?.players[currentPlayerId].color
+                detail =
+                  deco === 'highlight' ? CellDetail.PREVIEW : CellDetail.ANCHOR
+              } else {
+                detail = CellDetail.BLANK
+              }
+
+              return (
+                <Cell
+                  key={x}
+                  color={color}
+                  detail={detail}
+                  onClick={() => handleCellClick(x, y)}
+                />
+              )
+            })}
           </div>
         ))}
       </div>

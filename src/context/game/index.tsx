@@ -1,5 +1,11 @@
 import { useState, createContext, useContext, useRef } from 'react'
-import { GameState, Mino, MinoPlacement, MinoTransform } from '@model/index'
+import {
+  Coordinate,
+  GameState,
+  Mino,
+  MinoPlacement,
+  MinoTransform,
+} from '@model/index'
 import { useRoom } from '@context/room'
 import { useNotice } from '@context/notice'
 import GameWorld from './game'
@@ -25,6 +31,7 @@ interface GameContextInterface {
     targetGameState?: GameState
   ): MinoPlacement[]
   place(playerId: number, placement: MinoPlacement): void
+  getAnchors(playerId: number): Coordinate[]
   gameWorld?: GameWorld // WARNING: This is mutable object so be careful to use this
 }
 
@@ -118,6 +125,10 @@ export function GameProvider({ children }) {
     setGamePhase(GamePhase.WAITING)
   }
 
+  function getAnchors(playerId: number): Coordinate[] {
+    return gameRef.current?.getAnchors(playerId) ?? []
+  }
+
   return (
     <GameContext.Provider
       value={{
@@ -134,6 +145,7 @@ export function GameProvider({ children }) {
         place,
         updater,
         gameWorld: gameRef.current,
+        getAnchors,
       }}
     >
       {children}
