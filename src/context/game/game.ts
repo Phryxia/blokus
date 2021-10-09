@@ -171,37 +171,27 @@ export default class GameWorld {
     let result: MinoPlacement[] = []
     for (let y = 0; y < BOARD_SIZE; ++y) {
       for (let x = 0; x < BOARD_SIZE; ++x) {
-        // Branch cutting
-        if (this.cellStates[y][x].playerId !== undefined) continue
-
         // For every position
         const targetMinos = mino
           ? [mino]
           : this.gameState.players[playerId].remainMinos
 
         targetMinos.forEach((baseMino) => {
-          if (transform) {
+          const transformations = transform
+            ? [transform]
+            : baseMino.analysis.meaningfulTransforms
+
+          transformations.map((transformation) => {
             const placement = {
               mino: baseMino,
               position: { x, y },
-              ...transform,
+              ...transformation,
             }
 
             if (this.isPlaceable(playerId, placement)) {
               result.push(placement)
             }
-          } else {
-            baseMino.analysis.preTransformed.map((transformedMino) => {
-              const placement = {
-                mino: transformedMino,
-                position: { x, y },
-              }
-
-              if (this.isPlaceable(playerId, placement)) {
-                result.push(placement)
-              }
-            })
-          }
+          })
         })
       }
     }

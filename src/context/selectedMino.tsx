@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import styles from '@styles/game.module.css'
 import MinoComponent from '@components/mino'
-import { Mino, MinoPlacement, MinoTransform, Rotation } from '@model/index'
+import { Mino, MinoTransform, Rotation } from '@model/index'
 import React, {
   createContext,
   useContext,
@@ -101,10 +101,19 @@ export function SelectedMinoProvider({ children }) {
     const feasiblePlacements = fullFeasiblePlacements[currentPlayerId].filter(
       (placement) => placement.mino.name === mino?.name
     )
-    if (feasiblePlacements?.length === 1) {
-      setIsFlippedX(!!feasiblePlacements[0].isFlippedX)
-      setIsFlippedY(!!feasiblePlacements[0].isFlippedY)
-      setRotation(feasiblePlacements[0].rotation ?? 0)
+    const feasibleTransformations = removeDuplication(
+      feasiblePlacements.map(({ isFlippedX, isFlippedY, rotation }) => ({
+        isFlippedX,
+        isFlippedY,
+        rotation,
+      }))
+    )
+
+    if (feasibleTransformations.length === 1) {
+      console.log(feasibleTransformations)
+      setIsFlippedX(!!feasibleTransformations[0].isFlippedX)
+      setIsFlippedY(!!feasibleTransformations[0].isFlippedY)
+      setRotation(feasibleTransformations[0].rotation ?? 0)
     } else {
       setIsFlippedX(false)
       setIsFlippedY(false)
@@ -133,4 +142,15 @@ export function SelectedMinoProvider({ children }) {
       )}
     </SelectedMinoContext.Provider>
   )
+}
+
+function removeDuplication(list: MinoTransform[]) {
+  const isDup: Record<string, boolean> = {}
+  return list.sort().filter((transform) => {
+    const key = `${transform.isFlippedX}-${transform.isFlippedY}-${transform.rotation}`
+    if (isDup[key]) return false
+
+    isDup[key] = true
+    return true
+  })
 }
