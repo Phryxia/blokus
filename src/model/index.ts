@@ -21,7 +21,7 @@ export interface Mino {
   analysis: {
     width: number
     height: number
-    meaningfulTransforms: MinoTransform[]
+    preTransformed: Mino[]
   }
 }
 

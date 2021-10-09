@@ -231,8 +231,7 @@ export const MINOS: Mino[] = [
     }
   })
   .map((normalizedMino) => {
-    const preTransformed: Coordinate[][] = []
-    const meaningfulTransforms: MinoTransform[] = []
+    const preTransformed: Mino[] = []
 
     const flips = [
       [false, false],
@@ -254,13 +253,20 @@ export const MINOS: Mino[] = [
         )
 
         if (
-          !preTransformed.some((shape) => isEquivalent(shape, rotatedShape))
+          !preTransformed.some(({ shapes }) =>
+            isEquivalent(shapes, rotatedShape)
+          )
         ) {
-          preTransformed.push(rotatedShape)
-          meaningfulTransforms.push({
-            isFlippedX,
-            isFlippedY,
-            rotation,
+          const { width, height } = getSize(rotatedShape)
+
+          preTransformed.push({
+            name: normalizedMino.name,
+            shapes: rotatedShape,
+            analysis: {
+              width,
+              height,
+              preTransformed: [],
+            },
           })
         }
       })
@@ -270,7 +276,7 @@ export const MINOS: Mino[] = [
       ...normalizedMino,
       analysis: {
         ...normalizedMino.analysis,
-        meaningfulTransforms,
+        preTransformed,
       },
     }
   })

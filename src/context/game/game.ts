@@ -7,7 +7,6 @@ import {
   Mino,
   Coordinate,
   MinoTransform,
-  Rotation,
   PlayerGameState,
 } from '@model/index'
 import { MINOS, transform } from '@model/minos'
@@ -168,37 +167,50 @@ export default class GameWorld {
   public getFeasiblePlacements(
     playerId: number,
     mino?: Mino,
-    transform?: MinoTransform
+    minoTransform?: MinoTransform
   ): MinoPlacement[] {
     if (playerId === -1) return []
 
     let result: MinoPlacement[] = []
-    for (let y = 0; y < BOARD_SIZE; ++y) {
-      for (let x = 0; x < BOARD_SIZE; ++x) {
-        // For every position
-        const targetMinos = mino
-          ? [mino]
-          : this.gameState.players[playerId].remainMinos
 
-        targetMinos.forEach((baseMino) => {
-          const transformations = transform
-            ? [transform]
-            : baseMino.analysis.meaningfulTransforms
+    // For every position
+    const targetMinos = mino
+      ? [mino]
+      : this.gameState.players[playerId].remainMinos
 
-          transformations.map((transformation) => {
-            const placement = {
-              mino: baseMino,
-              position: { x, y },
-              ...transformation,
+    targetMinos.forEach((targetMino) => {
+      const transformed = minoTransform
+        ? [transform(targetMino, minoTransform)]
+        : targetMino.analysis.preTransformed
+
+      transformed.map((baseMino) => {
+        const w = Math.floor(baseMino.analysis.width / 2)
+        const h = Math.floor(baseMino.analysis.height / 2)
+        const isChecked: Record<string, boolean> = {}
+
+        this.anchors[playerId].forEach((anchor) => {
+          for (let y = -h; y <= h; ++y) {
+            for (let x = -w; x <= w; ++x) {
+              const nx = anchor.x + x
+              const ny = anchor.y + y
+              const key = `${nx}-${ny}`
+
+              if (isChecked[key]) continue
+              isChecked[key] = true
+
+              const placement = {
+                mino: baseMino,
+                position: { x: nx, y: ny },
+              }
+
+              if (this.isPlaceable(playerId, placement)) {
+                result.push(placement)
+              }
             }
-
-            if (this.isPlaceable(playerId, placement)) {
-              result.push(placement)
-            }
-          })
+          }
         })
-      }
-    }
+      })
+    })
 
     return result
   }

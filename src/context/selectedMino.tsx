@@ -97,28 +97,9 @@ export function SelectedMinoProvider({ children }) {
 
   function changeSelectedMino(mino: Mino): void {
     setSelectedMino(mino)
-
-    const feasiblePlacements = fullFeasiblePlacements[currentPlayerId].filter(
-      (placement) => placement.mino.name === mino?.name
-    )
-    const feasibleTransformations = removeDuplication(
-      feasiblePlacements.map(({ isFlippedX, isFlippedY, rotation }) => ({
-        isFlippedX,
-        isFlippedY,
-        rotation,
-      }))
-    )
-
-    if (feasibleTransformations.length === 1) {
-      console.log(feasibleTransformations)
-      setIsFlippedX(!!feasibleTransformations[0].isFlippedX)
-      setIsFlippedY(!!feasibleTransformations[0].isFlippedY)
-      setRotation(feasibleTransformations[0].rotation ?? 0)
-    } else {
-      setIsFlippedX(false)
-      setIsFlippedY(false)
-      setRotation(0)
-    }
+    setIsFlippedX(false)
+    setIsFlippedY(false)
+    setRotation(0)
   }
 
   return (
@@ -142,15 +123,4 @@ export function SelectedMinoProvider({ children }) {
       )}
     </SelectedMinoContext.Provider>
   )
-}
-
-function removeDuplication(list: MinoTransform[]) {
-  const isDup: Record<string, boolean> = {}
-  return list.sort().filter((transform) => {
-    const key = `${transform.isFlippedX}-${transform.isFlippedY}-${transform.rotation}`
-    if (isDup[key]) return false
-
-    isDup[key] = true
-    return true
-  })
 }

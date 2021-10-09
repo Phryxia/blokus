@@ -94,6 +94,7 @@ export function useAi(difficulty?: AiDifficulty, customOption?: AiOption) {
           let myPossibility = 0
           let othersPossibility = 0
           const newWorld = gameWorld.fork()
+
           newWorld.place(currentPlayerId, placement)
           newWorld
             .getFullFeasiblePlacements()
