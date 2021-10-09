@@ -69,56 +69,53 @@ export function useAi(difficulty?: AiDifficulty, customOption?: AiOption) {
   if (!gameWorld || myFeasiblePlacements.length === 0) return () => {}
 
   return () => {
-    setTimeout(() => {
-      const filteredPlacements = option.computationLimit
-        ? getRandomElements(myFeasiblePlacements, option.computationLimit)
-        : shuffle(myFeasiblePlacements)
-      const startTime = new Date()
+    const filteredPlacements = option.computationLimit
+      ? getRandomElements(myFeasiblePlacements, option.computationLimit)
+      : shuffle(myFeasiblePlacements)
+    const startTime = new Date()
 
-      const selectedPlacement = filteredPlacements
-        .map((placement, index) => {
-          if (
-            option.timeLimit &&
-            option.timeLimit <
-              (new Date().getTime() - startTime.getTime()) / 1000
-          ) {
-            console.log('TL')
-            return {
-              placement,
-              score: -99999,
-            }
-          }
-
-          console.log(`${index + 1}/${filteredPlacements.length}`)
-
-          let myPossibility = 0
-          let othersPossibility = 0
-          const newWorld = gameWorld.fork()
-
-          newWorld.place(currentPlayerId, placement)
-          newWorld
-            .getFullFeasiblePlacements()
-            .forEach((nextPlacements, playerId) => {
-              if (playerId === currentPlayerId) {
-                myPossibility += nextPlacements.length
-              } else {
-                othersPossibility += nextPlacements.length
-              }
-            })
-
+    const selectedPlacement = filteredPlacements
+      .map((placement, index) => {
+        if (
+          option.timeLimit &&
+          option.timeLimit < (new Date().getTime() - startTime.getTime()) / 1000
+        ) {
+          console.log('TL')
           return {
             placement,
-            score:
-              option.defensiveness * myPossibility -
-              (option.aggression * othersPossibility) /
-                (gameWorld.getGameState().players.length - 1),
+            score: -99999,
           }
-        })
-        .sort(
-          ({ score: scoreA }, { score: scoreB }) => scoreB - scoreA
-        )[0].placement
+        }
 
-      place(currentPlayerId, selectedPlacement)
-    }, 1)
+        console.log(`${index + 1}/${filteredPlacements.length}`)
+
+        let myPossibility = 0
+        let othersPossibility = 0
+        const newWorld = gameWorld.fork()
+
+        newWorld.place(currentPlayerId, placement)
+        newWorld
+          .getFullFeasiblePlacements()
+          .forEach((nextPlacements, playerId) => {
+            if (playerId === currentPlayerId) {
+              myPossibility += nextPlacements.length
+            } else {
+              othersPossibility += nextPlacements.length
+            }
+          })
+
+        return {
+          placement,
+          score:
+            option.defensiveness * myPossibility -
+            (option.aggression * othersPossibility) /
+              (gameWorld.getGameState().players.length - 1),
+        }
+      })
+      .sort(
+        ({ score: scoreA }, { score: scoreB }) => scoreB - scoreA
+      )[0].placement
+
+    place(currentPlayerId, selectedPlacement)
   }
 }
