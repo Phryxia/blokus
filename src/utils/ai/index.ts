@@ -100,7 +100,10 @@ export function useAi(difficulty?: AiDifficulty, customOption?: AiOption) {
             if (playerId === currentPlayerId) {
               myPossibility += nextPlacements.length
             } else {
-              othersPossibility += nextPlacements.length
+              othersPossibility = Math.max(
+                nextPlacements.length,
+                othersPossibility
+              )
             }
           })
 
@@ -108,8 +111,7 @@ export function useAi(difficulty?: AiDifficulty, customOption?: AiOption) {
           placement,
           score:
             option.defensiveness * myPossibility -
-            (option.aggression * othersPossibility) /
-              (gameWorld.getGameState().players.length - 1),
+            option.aggression * othersPossibility,
         }
       })
       .sort(
