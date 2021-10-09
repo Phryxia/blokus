@@ -20,14 +20,7 @@ export default function MinoComponent({
   cellSizeUnit = 'px',
   isBiased = false,
 }: MinoProps) {
-  const { width, height } = getSize(mino)
-  const { xMin, yMin } = mino.shapes.reduce(
-    ({ xMin, yMin }, { x, y }) => ({
-      xMin: Math.min(xMin, x),
-      yMin: Math.min(yMin, y),
-    }),
-    { xMin: 9999, yMin: 9999 }
-  )
+  const { width, height, xMin, yMin } = getSize(mino.shapes)
   const multiplier = isBiased ? 1 : 0
   return (
     <div

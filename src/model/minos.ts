@@ -1,13 +1,10 @@
-import { Mino, MinoTransform, Rotation } from './'
+import { Coordinate, Mino, MinoTransform, Rotation } from './'
 
 export const MINOS: Mino[] = [
   // 1 x 1
   {
     name: '1x1',
     shapes: [{ x: 0, y: 0 }],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: true,
   },
   // 1 x 2
   {
@@ -16,9 +13,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 2 L shaped
   {
@@ -28,9 +22,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 0 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 1 x 3
   {
@@ -40,9 +31,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: -1, y: 0 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 2
   {
@@ -53,9 +41,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 1, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: true,
   },
   // 2 x 3 T shape
   {
@@ -66,9 +51,6 @@ export const MINOS: Mino[] = [
       { x: -1, y: 0 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 1 x 4
   {
@@ -79,9 +61,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 2, y: 0 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 3 L shape
   {
@@ -92,9 +71,6 @@ export const MINOS: Mino[] = [
       { x: 2, y: 0 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 3 S shape
   {
@@ -105,9 +81,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 4 L shape
   {
@@ -119,9 +92,6 @@ export const MINOS: Mino[] = [
       { x: 3, y: 0 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 3 T shape
   {
@@ -133,9 +103,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: -1 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 3 L shape
   {
@@ -147,9 +114,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 0, y: 2 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 2 x 4 S (2 + 3)
   {
@@ -161,9 +125,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 1 },
       { x: 2, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: false,
-    isRotationUseless: false,
   },
   // 3 x 3 S (2 + 1 + 2)
   {
@@ -175,9 +136,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 1 },
       { x: -1, y: -1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 1 x 5
   {
@@ -189,9 +147,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 2, y: 0 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 2 b shape
   {
@@ -203,9 +158,6 @@ export const MINOS: Mino[] = [
       { x: 1, y: 0 },
       { x: 1, y: -1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 3 w shape
   {
@@ -217,9 +169,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: 1 },
       { x: 1, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 2 u shape
   {
@@ -231,9 +180,6 @@ export const MINOS: Mino[] = [
       { x: -1, y: 1 },
       { x: 1, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
   // 3 x 3 cross
   {
@@ -245,9 +191,6 @@ export const MINOS: Mino[] = [
       { x: 0, y: -1 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: true,
-    isSymmetricY: true,
-    isRotationUseless: true,
   },
   // 3 x 3 f shape
   {
@@ -259,9 +202,6 @@ export const MINOS: Mino[] = [
       { x: -1, y: 0 },
       { x: 1, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: false,
-    isRotationUseless: false,
   },
   // 2 x 4 T shape
   {
@@ -273,31 +213,92 @@ export const MINOS: Mino[] = [
       { x: 2, y: 0 },
       { x: 0, y: 1 },
     ],
-    isSymmetricX: false,
-    isSymmetricY: true,
-    isRotationUseless: false,
   },
 ]
+  .map((basicMino) => {
+    const { xMin, width, yMin, height } = getSize(basicMino.shapes)
+    const xCenter = Math.floor(width / 2)
+    const yCenter = Math.floor(height / 2)
 
-export function getSize(mino: Mino): { width: number; height: number } {
-  const { xMin, xMax, yMin, yMax } = mino.shapes.reduce(
-    ({ xMin, xMax, yMin, yMax }, { x, y }) => {
-      return {
-        xMin: Math.min(xMin, x),
-        xMax: Math.max(xMax, x),
-        yMin: Math.min(yMin, y),
-        yMax: Math.max(yMax, y),
-      }
-    },
-    { xMin: 9999, xMax: -9999, yMin: 9999, yMax: -9999 }
-  )
-  return {
-    width: xMax - xMin + 1,
-    height: yMax - yMin + 1,
-  }
+    // Move to the center
+    return {
+      name: basicMino.name,
+      shapes: translate(basicMino.shapes, -xMin - xCenter, -yMin - yCenter),
+      analysis: {
+        width,
+        height,
+      },
+    }
+  })
+  .map((normalizedMino) => {
+    const preTransformed: Mino[] = []
+
+    const flips = [
+      [false, false],
+      [false, true],
+      [true, false],
+    ]
+    const rotations: Rotation[] = [0, 90, 180, 270]
+
+    flips.forEach(([isFlippedX, isFlippedY]) => {
+      const flippedShape = matrixTransform(normalizedMino.shapes, [
+        [isFlippedX ? -1 : 1, 0],
+        [0, isFlippedY ? -1 : 1],
+      ])
+
+      rotations.forEach((rotation) => {
+        const rotatedShape = matrixTransform(
+          flippedShape,
+          getRotationMatrix(rotation)
+        )
+
+        if (
+          !preTransformed.some((transformedMino) =>
+            isEquivalent(transformedMino.shapes, rotatedShape)
+          )
+        ) {
+          const { width, height } = getSize(rotatedShape)
+          preTransformed.push({
+            ...normalizedMino,
+            shapes: rotatedShape,
+            analysis: {
+              width,
+              height,
+              preTransformed: [],
+            },
+          })
+        }
+      })
+    })
+
+    return {
+      ...normalizedMino,
+      analysis: {
+        ...normalizedMino.analysis,
+        preTransformed,
+      },
+    }
+  })
+
+function translate(
+  coordinates: Coordinate[],
+  xBias: number,
+  yBias: number
+): Coordinate[] {
+  return coordinates.map(({ x, y }) => ({ x: x + xBias, y: y + yBias }))
 }
 
-export function rotate(mino: Mino, rotation: Rotation): Mino {
+function matrixTransform(
+  coordinates: Coordinate[],
+  matrix: number[][]
+): Coordinate[] {
+  return coordinates.map(({ x, y }) => ({
+    x: matrix[0][0] * x + matrix[0][1] * y,
+    y: matrix[1][0] * x + matrix[1][1] * y,
+  }))
+}
+
+function getRotationMatrix(rotation: Rotation): number[][] {
   let c
   let s
   switch (rotation) {
@@ -318,12 +319,74 @@ export function rotate(mino: Mino, rotation: Rotation): Mino {
       s = -1
       break
   }
+  return [
+    [c, -s],
+    [s, c],
+  ]
+}
+
+function normalize(coordinates: Coordinate[]): Coordinate[] {
+  const { xMin, yMin } = getSize(coordinates)
+  return translate(coordinates, -xMin, -yMin)
+}
+
+function isEquivalent(
+  coordinatesA: Coordinate[],
+  coordinatesB: Coordinate[]
+): boolean {
+  if (coordinatesA.length !== coordinatesB.length) return false
+
+  coordinatesA = normalize(coordinatesA)
+  coordinatesB = normalize(coordinatesB)
+
+  const isReserved: Record<string, boolean> = {}
+
+  coordinatesA.forEach(({ x, y }) => (isReserved[`${x}-${y}`] = true))
+  return !coordinatesB.some(({ x, y }) => !isReserved[`${x}-${y}`])
+}
+
+export function getSize(coordinates: Coordinate[]): {
+  width: number
+  height: number
+  xMin: number
+  yMin: number
+} {
+  const { xMin, xMax, yMin, yMax } = coordinates.reduce(
+    ({ xMin, xMax, yMin, yMax }, { x, y }) => {
+      return {
+        xMin: Math.min(xMin, x),
+        xMax: Math.max(xMax, x),
+        yMin: Math.min(yMin, y),
+        yMax: Math.max(yMax, y),
+      }
+    },
+    { xMin: 9999, xMax: -9999, yMin: 9999, yMax: -9999 }
+  )
+  return {
+    width: xMax - xMin + 1,
+    height: yMax - yMin + 1,
+    xMin,
+    yMin,
+  }
+}
+
+export function rotate(mino: Mino, rotation: Rotation): Mino {
+  if (rotation === 0) return mino
+
   return {
     ...mino,
-    shapes: mino.shapes.map(({ x, y }) => ({
-      x: c * x - s * y,
-      y: s * x + c * y,
-    })),
+    shapes: matrixTransform(mino.shapes, getRotationMatrix(rotation)),
+    analysis: {
+      ...mino.analysis,
+      width:
+        rotation === 90 || rotation === 270
+          ? mino.analysis.height
+          : mino.analysis.width,
+      height:
+        rotation === 90 || rotation === 270
+          ? mino.analysis.width
+          : mino.analysis.height,
+    },
   }
 }
 
